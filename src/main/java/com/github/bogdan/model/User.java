@@ -9,6 +9,8 @@ import java.util.Objects;
 public class User {
     @DatabaseField(generatedId = true)
     private int id;
+    @DatabaseField
+    private Role role;
     @DatabaseField(unique = true)
     private String login;
     @DatabaseField
@@ -33,7 +35,8 @@ public class User {
     public User() {
     }
 
-    public User(String login, String password, String email, String dateOfBirthday, String dateOfRegister, String phone, String fname, String lname, String city, String country) {
+    public User(Role role, String login, String password, String email, String dateOfBirthday, String dateOfRegister, String phone, String fname, String lname, String city, String country) {
+        this.role = role;
         this.login = login;
         this.password = password;
         this.email = email;
@@ -44,6 +47,18 @@ public class User {
         this.lname = lname;
         this.city = city;
         this.country = country;
+    }
+
+    public User(Role role, String login, String password, String email, String dateOfBirthday, String dateOfRegister, String phone, String fname, String lname) {
+        this.role = role;
+        this.login = login;
+        this.password = password;
+        this.email = email;
+        this.dateOfBirthday = dateOfBirthday;
+        this.dateOfRegister = dateOfRegister;
+        this.phone = phone;
+        this.fname = fname;
+        this.lname = lname;
     }
 
     public int getId() {
@@ -134,12 +149,21 @@ public class User {
         this.country = country;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return id == user.id &&
+                role == user.role &&
                 Objects.equals(login, user.login) &&
                 Objects.equals(password, user.password) &&
                 Objects.equals(email, user.email) &&
@@ -154,6 +178,6 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, login, password, email, dateOfBirthday, dateOfRegister, phone, fname, lname, city, country);
+        return Objects.hash(id, role, login, password, email, dateOfBirthday, dateOfRegister, phone, fname, lname, city, country);
     }
 }
