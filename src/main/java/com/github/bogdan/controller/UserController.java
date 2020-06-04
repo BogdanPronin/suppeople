@@ -10,17 +10,26 @@ import io.javalin.http.Context;
 
 import java.sql.SQLException;
 
-import static com.github.bogdan.service.СtxService.*;
+import static com.github.bogdan.service.CtxService.*;
 
 public class UserController {
+    public static ObjectMapper objectMapper = new ObjectMapper();
+
     public static void add(Context ctx, Dao<User,Integer> userDao) throws JsonProcessingException, SQLException {
+        checkBodyRequestIsEmpty(ctx);
+        checkDoesBasicAuthEmpty(ctx);
+        ctx.header("content-type:app/json");
         String body = ctx.body();
+
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.addDeserializer(User.class, new DeserializerForAddUser());
-        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(simpleModule);
+
         User user = objectMapper.readValue(body, User.class);
         userDao.create(user);
         created(ctx);
+    }
+    public static void get(Context ctx,Dao<User, Integer> userDao){
+
     }
 }

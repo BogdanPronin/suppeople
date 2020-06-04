@@ -30,17 +30,4 @@ public class JsonMessage {
         this.status = status;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        JsonMessage that = (JsonMessage) o;
-        return status == that.status &&
-                Objects.equals(message, that.message);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(message, status);
-    }
 }
