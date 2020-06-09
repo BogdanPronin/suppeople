@@ -3,6 +3,7 @@ package com.github.bogdan;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.github.bogdan.controller.MainController;
 import com.github.bogdan.controller.UserController;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
@@ -17,12 +18,16 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
+
         Javalin app = Javalin
                 .create();
         app.config = new JavalinConfig().enableDevLogging();
         app.start(22867);
         Dao<User, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
-        app.post("/users", ctx -> UserController.add(ctx,userDao));
+        app.post("/users", ctx -> MainController.add(ctx,userDao,User.class));
+        app.get("/users", ctx -> MainController.get(ctx,userDao, User.class));
+        app.patch("/users", ctx -> UserController.change(ctx,userDao));
+
         app.exception(WebException.class, (e, ctx) -> {
             SimpleModule simpleModule = new SimpleModule();
             simpleModule.addSerializer(WebException.class,new WebExceptionSerializer());

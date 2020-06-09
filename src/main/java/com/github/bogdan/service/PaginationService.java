@@ -7,8 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class PaginationService {
-    public static <T> ArrayList<T> getPage(Dao<T,Integer> dao, int page, int size) throws SQLException {
-        ArrayList<T> list = new ArrayList();
+    public static final int defaultPagesSize = 10;
+    public static final int defaultPage = 1;
+    public static <T> ArrayList<T> getPagination(Dao<T,Integer> dao, int page, int size) throws SQLException {
+        ArrayList<T> list;
         long startRow = (page-1)*size;
         long maxRows = startRow+size;
         QueryBuilder<T, Integer> queryBuilder = dao.queryBuilder();

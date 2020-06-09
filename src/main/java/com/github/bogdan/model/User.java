@@ -3,7 +3,10 @@ package com.github.bogdan.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
 import java.util.Objects;
+
+import static com.github.bogdan.service.ClassService.getFieldsName;
 
 @DatabaseTable(tableName = "user")
 public class User {
@@ -179,5 +182,15 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(id, role, login, password, email, dateOfBirthday, dateOfRegister, phone, fname, lname, city, country);
+    }
+    public static ArrayList<String> getUserQueryParams(){
+        ArrayList<String> s = new ArrayList<>();
+        s.add("fname");
+        s.add("lname");
+        s.add("city");
+        s.add("country");
+        s.add("dateOfRegister");
+        s.add("dateOfBirthday");
+        return s;
     }
 }
