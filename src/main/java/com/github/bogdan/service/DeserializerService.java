@@ -17,23 +17,23 @@ public class DeserializerService {
         } else return node.get(field).asText();
     }
 
-    public static String getNullableStringFieldValue(JsonNode node, String field){
+    public static String getOldStringFieldValue(JsonNode node, String field,String value){
         if(node instanceof NullNode){
-            return null;
+            return value;
         }else if(node.get(field) == null){
-            return null;
+            return value;
         }else if(node.get(field).asText()==""){
-            return null;
+            return value;
         } else return node.get(field).asText();
     }
 
-    public static int getNullableIntFieldValue(JsonNode node, String field){
+    public static int getOldIntFieldValue(JsonNode node, String field,int value){
         if(node instanceof NullNode){
-            return -1;
+            return value;
         }else if(node.get(field) == null){
-            return -1;
+            return value;
         }else if(node.get(field).asText()==""){
-            return -1;
+            return value;
         } else return node.get(field).asInt();
     }
 

@@ -11,7 +11,9 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.sql.SQLException;
 
 public class AuthService {
-    public static boolean authorization(String login, String  password) throws SQLException {
+    public static boolean authorization(Context ctx) throws SQLException {
+        String login = ctx.basicAuthCredentials().getUsername();
+        String password = ctx.basicAuthCredentials().getPassword();
         Dao<User, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
         for(User u:userDao.queryForAll()){
             if(u.getLogin().equals(login) && BCrypt.checkpw(password,u.getPassword())){
@@ -20,8 +22,8 @@ public class AuthService {
         }
         return false;
     }
-    public static void checkAuthorization(String login, String password, Context ctx) throws SQLException {
-        if(!authorization(login,password))
+    public static void checkAuthorization(Context ctx) throws SQLException {
+        if(!authorization(ctx))
             throw new WebException("Authorization failed",400);
     }
 }

@@ -36,4 +36,12 @@ public class UserService {
         }
     }
 
+    public static User getUserByLogin(String login) throws SQLException {
+        for(User user: userDao.queryForAll()){
+            if(user.getLogin().equals(login)){
+                return user;
+            }
+        }
+        return null;
+    }
 }

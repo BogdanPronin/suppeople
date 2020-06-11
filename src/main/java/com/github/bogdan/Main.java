@@ -26,7 +26,7 @@ public class Main {
         Dao<User, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
         app.post("/users", ctx -> MainController.add(ctx,userDao,User.class));
         app.get("/users", ctx -> MainController.get(ctx,userDao, User.class));
-        app.patch("/users", ctx -> UserController.change(ctx,userDao));
+        app.patch("/users/:id", ctx -> MainController.change(ctx,userDao,User.class));
 
         app.exception(WebException.class, (e, ctx) -> {
             SimpleModule simpleModule = new SimpleModule();
