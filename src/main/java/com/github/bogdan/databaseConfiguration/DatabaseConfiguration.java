@@ -19,12 +19,8 @@ public class DatabaseConfiguration {
             TableUtils.createTableIfNotExists(connectionSource, PostApplication.class);
             TableUtils.createTableIfNotExists(connectionSource, User.class);
             TableUtils.createTableIfNotExists(connectionSource,UserArea.class);
-//            TableUtils.createTableIfNotExists(connectionSource, Subject.class);
-//            TableUtils.createTableIfNotExists(connectionSource, Group.class);
-//            TableUtils.createTableIfNotExists(connectionSource, Schedule.class);
-//            TableUtils.createTableIfNotExists(connectionSource, UserGroup.class);
-//            TableUtils.createTableIfNotExists(connectionSource, Attendance.class);
-        } catch (SQLException e) {
+            TableUtils.createTableIfNotExists(connectionSource,Deadline.class);
+      } catch (SQLException e) {
             e.printStackTrace();
         }
     }

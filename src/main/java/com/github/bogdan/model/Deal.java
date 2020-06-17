@@ -3,20 +3,27 @@ package com.github.bogdan.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 @DatabaseTable(tableName = "deal")
-public class Deal {
+public class Deal implements Filtration{
+
     @DatabaseField(generatedId = true)
     private int id;
+
     @DatabaseField(foreign = true,foreignAutoRefresh = true)
     private Post post;
+
     @DatabaseField(foreign = true,foreignAutoRefresh = true)
     private PostApplication postApplication;
+
     @DatabaseField
     private String startDate;
+
     @DatabaseField
     private Status status;
+
     @DatabaseField
     private String endDate;
 
@@ -95,5 +102,10 @@ public class Deal {
     @Override
     public int hashCode() {
         return Objects.hash(id, post, postApplication, startDate, status, endDate);
+    }
+
+    @Override
+    public ArrayList<String> getQueryParams() {
+        return null;
     }
 }

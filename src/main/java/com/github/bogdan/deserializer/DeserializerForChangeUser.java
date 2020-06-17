@@ -27,14 +27,19 @@ public class DeserializerForChangeUser extends StdDeserializer<User> {
         super (User.class);
         this.id = id;
     }
+
     private int id;
+
     public int getId(){
         return id;
     }
+
     public void setId(int id){
         this.id = id;
     }
+
     @Override
+
     public User deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
         try {
             User userBase = userDao.queryForId(id);
@@ -75,12 +80,12 @@ public class DeserializerForChangeUser extends StdDeserializer<User> {
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12));
             u.setPassword(hashedPassword);
 
-
             return u;
 
         } catch (SQLException | NumberParseException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 }

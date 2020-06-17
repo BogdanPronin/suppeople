@@ -3,12 +3,15 @@ package com.github.bogdan.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 @DatabaseTable(tableName = "area_of_activity")
-public class AreaOfActivity {
+public class AreaOfActivity implements Filtration{
+
     @DatabaseField(generatedId = true)
     private int id;
+
     @DatabaseField(unique = true)
     private String name;
 
@@ -48,5 +51,10 @@ public class AreaOfActivity {
     @Override
     public int hashCode() {
         return Objects.hash(id, name);
+    }
+
+    @Override
+    public ArrayList<String> getQueryParams() {
+        return null;
     }
 }

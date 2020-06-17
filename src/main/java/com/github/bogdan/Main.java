@@ -7,6 +7,7 @@ import com.github.bogdan.controller.MainController;
 import com.github.bogdan.controller.UserController;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
+import com.github.bogdan.model.AreaOfActivity;
 import com.github.bogdan.model.User;
 import com.github.bogdan.serializer.WebExceptionSerializer;
 import com.j256.ormlite.dao.Dao;
@@ -23,10 +24,17 @@ public class Main {
                 .create();
         app.config = new JavalinConfig().enableDevLogging();
         app.start(22867);
+
         Dao<User, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
+        Dao<AreaOfActivity,Integer> areaOfActivityDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, AreaOfActivity.class);
+
         app.post("/users", ctx -> MainController.add(ctx,userDao,User.class));
         app.get("/users", ctx -> MainController.get(ctx,userDao, User.class));
         app.patch("/users/:id", ctx -> MainController.change(ctx,userDao,User.class));
+        app.delete("/users/:id",ctx -> MainController.delete(ctx,userDao,User.class));
+
+        app.post("/areaOfActivity",ctx -> MainController.add(ctx,areaOfActivityDao,AreaOfActivity.class));
+        app.get("/areaOfActivity", ctx -> MainController.get(ctx,areaOfActivityDao, AreaOfActivity.class));
 
         app.exception(WebException.class, (e, ctx) -> {
             SimpleModule simpleModule = new SimpleModule();

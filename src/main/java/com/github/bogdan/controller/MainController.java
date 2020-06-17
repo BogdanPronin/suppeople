@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.bogdan.deserializer.DeserializerForAddUser;
+import com.github.bogdan.deserializer.DeserializerForAreaOfActivity;
 import com.github.bogdan.deserializer.DeserializerForChangeUser;
+import com.github.bogdan.model.AreaOfActivity;
+import com.github.bogdan.model.Post;
 import com.github.bogdan.model.Role;
 import com.github.bogdan.model.User;
 import com.github.bogdan.serializer.UserGetSerializer;
@@ -16,7 +19,8 @@ import java.sql.SQLException;
 import static com.github.bogdan.service.AuthService.checkAuthorization;
 import static com.github.bogdan.service.CtxService.*;
 import static com.github.bogdan.service.PaginationService.getPagination;
-import static com.github.bogdan.service.UserService.getUserByLogin;
+import static com.github.bogdan.service.UserService.checkIsUserAdmin;
+import static com.github.bogdan.service.UserService.getUser;
 
 public class MainController {
     public static <T> void add(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
@@ -30,6 +34,14 @@ public class MainController {
             checkDoesBasicAuthEmpty(ctx);
             checkAuthorization(ctx);
         }
+
+        if(clazz.equals(Post.class)){
+           // simpleModule.addDeserializer();
+        }else if(clazz.equals(AreaOfActivity.class)){
+            checkIsUserAdmin(ctx);
+            simpleModule.addDeserializer(AreaOfActivity.class,new DeserializerForAreaOfActivity());
+        }
+
         checkBodyRequestIsEmpty(ctx);
         String body = ctx.body();
         objectMapper.registerModule(simpleModule);
@@ -38,8 +50,7 @@ public class MainController {
         created(ctx);
     }
     public static <T> void get(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
-        checkDoesBasicAuthEmpty(ctx);
-        checkAuthorization(ctx);
+
         ctx.header("content-type:app/json");
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -47,6 +58,7 @@ public class MainController {
         if (clazz.equals(User.class)) {
             simpleModule.addSerializer(User.class, new UserGetSerializer());
         }
+
         objectMapper.registerModule(simpleModule);
 
         int page = getPage(ctx);
@@ -66,8 +78,8 @@ public class MainController {
         String body = ctx.body();
         checkAuthorization(ctx);
         if (clazz.equals(User.class)) {
-            if(getUserByLogin(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
-                if(id != getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId()){
+            if(getUser(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+                if(id != getUser(ctx.basicAuthCredentials().getUsername()).getId()){
                     youAreNotAdmin(ctx);
                 }
             }
@@ -86,8 +98,8 @@ public class MainController {
         int id = Integer.parseInt(ctx.pathParam("id"));
         checkAuthorization(ctx);
         if (clazz.equals(User.class)) {
-            if(getUserByLogin(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
-                if(id != getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId()){
+            if(getUser(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+                if(id != getUser(ctx.basicAuthCredentials().getUsername()).getId()){
                     youAreNotAdmin(ctx);
                 }
             }

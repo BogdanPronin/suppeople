@@ -21,11 +21,7 @@ public class CtxService {
             throw new WebException("Body request is empty",400);
     }
 
-    public static void checkIsUserAdmin(User user, Context ctx) throws JsonProcessingException {
-        if(user.getRole() != Role.ADMIN){
-            youAreNotAdmin(ctx);
-        }
-    }
+
 
     public static void youAreNotAdmin(Context ctx) throws JsonProcessingException {
         throw new WebException("You aren't admin",401);

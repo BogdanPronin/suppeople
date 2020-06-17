@@ -1,14 +1,23 @@
 package com.github.bogdan.service;
 
 
+import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
+import com.github.bogdan.model.Deadline;
+import com.github.bogdan.model.User;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 public class LocalDateService {
     static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -52,4 +61,24 @@ public class LocalDateService {
         }
     }
 
+    public static Deadline checkDeadline(String deadline){
+        Pattern p = Pattern.compile("/^[0-9]{1,3}[d]{1}[0-9]{1,3}[h]{1}[0-9]{1,3}[m]{1}$/");
+        if(!p.matcher(deadline).matches()){
+            throw new WebException("Wrong deadline format, correct format \"$d$h$m\"",400);
+        }else{
+            Pattern pattern = Pattern.compile("[dhm]");
+            String[] a = pattern.split(deadline);
+            ArrayList<String> list = new ArrayList<>();
+            list.addAll(Arrays.asList(a));
+            int days = Integer.parseInt(list.get(0));
+            int hours = Integer.parseInt(list.get(1));
+            int minutes = Integer.parseInt(list.get(2));
+            hours += minutes/60;
+            minutes = minutes%60;
+            days += hours/24;
+            hours = hours%24;
+            Deadline deadlineObj = new Deadline(days,minutes,hours);
+            return deadlineObj;
+        }
+    }
 }

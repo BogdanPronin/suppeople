@@ -3,10 +3,11 @@ package com.github.bogdan.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 @DatabaseTable(tableName = "post")
-public class Post {
+public class Post implements Filtration {
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField(foreign = true,foreignAutoRefresh = true)
@@ -15,8 +16,8 @@ public class Post {
     private AreaOfActivity areaOfActivity;
     @DatabaseField
     private String task;
-    @DatabaseField
-    private String deadline;
+    @DatabaseField(foreign = true,foreignAutoRefresh = true)
+    private Deadline deadline;
     @DatabaseField
     private String city;
     @DatabaseField
@@ -25,7 +26,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(User user, AreaOfActivity areaOfActivity, String task, String deadline, String city, String country) {
+    public Post(User user, AreaOfActivity areaOfActivity, String task, Deadline deadline, String city, String country) {
         this.user = user;
         this.areaOfActivity = areaOfActivity;
         this.task = task;
@@ -66,11 +67,11 @@ public class Post {
         this.task = task;
     }
 
-    public String getDeadline() {
+    public Deadline getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(String deadline) {
+    public void setDeadline(Deadline deadline) {
         this.deadline = deadline;
     }
 
@@ -107,5 +108,10 @@ public class Post {
     @Override
     public int hashCode() {
         return Objects.hash(id, user, areaOfActivity, task, deadline, city, country);
+    }
+
+    @Override
+    public ArrayList<String> getQueryParams() {
+        return null;
     }
 }

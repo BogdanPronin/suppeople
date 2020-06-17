@@ -9,29 +9,41 @@ import java.util.Objects;
 import static com.github.bogdan.service.ClassService.getFieldsName;
 
 @DatabaseTable(tableName = "user")
-public class User {
+public class User implements Filtration {
+
     @DatabaseField(generatedId = true)
     private int id;
+
     @DatabaseField
     private Role role;
+
     @DatabaseField(unique = true)
     private String login;
+
     @DatabaseField
     private String password;
+
     @DatabaseField(unique = true)
     private String email;
+
     @DatabaseField
     private String dateOfBirthday;
+
     @DatabaseField
     private String dateOfRegister;
+
     @DatabaseField
     private String phone;
+
     @DatabaseField
     private String fname;
+
     @DatabaseField
     private String lname;
+
     @DatabaseField
     private String city;
+
     @DatabaseField
     private String country;
 
@@ -183,7 +195,9 @@ public class User {
     public int hashCode() {
         return Objects.hash(id, role, login, password, email, dateOfBirthday, dateOfRegister, phone, fname, lname, city, country);
     }
-    public static ArrayList<String> getUserQueryParams(){
+
+    @Override
+    public ArrayList<String> getQueryParams(){
         ArrayList<String> s = new ArrayList<>();
         s.add("fname");
         s.add("lname");
