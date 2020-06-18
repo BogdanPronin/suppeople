@@ -10,9 +10,6 @@ import io.javalin.http.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.github.bogdan.service.PaginationService.defaultPage;
-import static com.github.bogdan.service.PaginationService.defaultPagesSize;
-
 public class CtxService {
     static Logger LOGGER = LoggerFactory.getLogger(CtxService.class);
 
@@ -66,12 +63,12 @@ public class CtxService {
     }
     public static int getPage(Context ctx){
         if(ctx.queryParam("page")==null){
-            return defaultPage;
+            return PaginationService.defaultPage;
         }else return Integer.parseInt(ctx.queryParam("page"));
     }
     public static int getPagesSize(Context ctx){
         if(ctx.queryParam("size")==null){
-            return defaultPagesSize;
+            return PaginationService.defaultPagesSize;
         }else return Integer.parseInt(ctx.queryParam("size"));
     }
 }

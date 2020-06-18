@@ -112,6 +112,12 @@ public class Post implements Filtration {
 
     @Override
     public ArrayList<String> getQueryParams() {
-        return null;
+        ArrayList<String> s = new ArrayList<>();
+        s.add("city");
+        s.add("country");
+        s.add("areaOfActivity");
+        s.add("user");
+        s.add("deadline");
+        return s;
     }
 }

@@ -62,9 +62,26 @@ public class ContactService {
             }
         }
     }
+
+    public static void checkIsPhoneAlreadyInUse(String phone,int userId) throws SQLException {
+        for(User user: userDao.queryForAll()){
+            if(user.getPhone().equals(phone) && user.getId() != userId){
+                throw new WebException("This phone already exist",400);
+            }
+        }
+    }
+
     public static void checkIsEmailAlreadyInUse(String email) throws SQLException {
         for(User user: userDao.queryForAll()){
-            if(user.getPhone().equals(email)){
+            if(user.getEmail().equals(email)){
+                throw new WebException("This email already exist",400);
+            }
+        }
+    }
+
+    public static void checkIsEmailAlreadyInUse(String email,int userId) throws SQLException {
+        for(User user: userDao.queryForAll()){
+            if(user.getEmail().equals(email) && user.getId()!=userId){
                 throw new WebException("This email already exist",400);
             }
         }

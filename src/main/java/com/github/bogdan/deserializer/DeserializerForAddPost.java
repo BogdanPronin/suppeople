@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.model.Deadline;
 import com.github.bogdan.model.Post;
+import com.github.bogdan.model.User;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 
@@ -23,8 +24,19 @@ import static com.github.bogdan.service.UserService.checkDoesSuchUserExist;
 import static com.github.bogdan.service.UserService.getUser;
 
 public class DeserializerForAddPost extends StdDeserializer<Post> {
-    protected DeserializerForAddPost() {
+    public DeserializerForAddPost(User user) {
         super(Post.class);
+        this.user = user;
+    }
+
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -36,9 +48,7 @@ public class DeserializerForAddPost extends StdDeserializer<Post> {
 
             Post post = new Post();
 
-            int user = getIntFieldValue(node,"user");
-            checkDoesSuchUserExist(user);
-            post.setUser(getUser(user));
+            post.setUser(user);
 
             int areaOfActivity = getIntFieldValue(node,"areaOfActivity");
             checkDoesSuchAreaOfActivityExist(areaOfActivity);

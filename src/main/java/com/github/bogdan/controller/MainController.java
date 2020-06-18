@@ -3,6 +3,7 @@ package com.github.bogdan.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.github.bogdan.deserializer.DeserializerForAddPost;
 import com.github.bogdan.deserializer.DeserializerForAddUser;
 import com.github.bogdan.deserializer.DeserializerForAreaOfActivity;
 import com.github.bogdan.deserializer.DeserializerForChangeUser;
@@ -13,31 +14,34 @@ import com.github.bogdan.model.User;
 import com.github.bogdan.serializer.UserGetSerializer;
 import com.j256.ormlite.dao.Dao;
 import io.javalin.http.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-
 import static com.github.bogdan.service.AuthService.checkAuthorization;
 import static com.github.bogdan.service.CtxService.*;
 import static com.github.bogdan.service.PaginationService.getPagination;
-import static com.github.bogdan.service.UserService.checkIsUserAdmin;
-import static com.github.bogdan.service.UserService.getUser;
+import static com.github.bogdan.service.PostService.getPostUser;
+import static com.github.bogdan.service.UserService.*;
 
 public class MainController {
+    static Logger LOGGER = LoggerFactory.getLogger(MainController.class);
+
     public static <T> void add(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
         ctx.header("content-type:app/json");
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        if (clazz.equals(User.class)) {
+        if (clazz == User.class) {
             simpleModule.addDeserializer(User.class, new DeserializerForAddUser());
         }else {
             checkDoesBasicAuthEmpty(ctx);
             checkAuthorization(ctx);
         }
 
-        if(clazz.equals(Post.class)){
-           // simpleModule.addDeserializer();
-        }else if(clazz.equals(AreaOfActivity.class)){
+        if(clazz == Post.class){
+            simpleModule.addDeserializer(Post.class, new DeserializerForAddPost(getUser(ctx.basicAuthCredentials().getUsername())));
+        }else if(clazz == AreaOfActivity.class){
             checkIsUserAdmin(ctx);
             simpleModule.addDeserializer(AreaOfActivity.class,new DeserializerForAreaOfActivity());
         }
@@ -49,13 +53,14 @@ public class MainController {
         dao.create((T) obj);
         created(ctx);
     }
+
     public static <T> void get(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
 
         ctx.header("content-type:app/json");
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        if (clazz.equals(User.class)) {
+        if (clazz == User.class) {
             simpleModule.addSerializer(User.class, new UserGetSerializer());
         }
 
@@ -63,10 +68,10 @@ public class MainController {
 
         int page = getPage(ctx);
         int size = getPagesSize(ctx);
-
         String serialized = objectMapper.writeValueAsString(getPagination(dao,page,size));
         ctx.result(serialized);
     }
+
     public static <T> void change(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
         checkDoesBasicAuthEmpty(ctx);
 
@@ -76,13 +81,15 @@ public class MainController {
         int id = Integer.parseInt(ctx.pathParam("id"));
         checkBodyRequestIsEmpty(ctx);
         String body = ctx.body();
+
         checkAuthorization(ctx);
-        if (clazz.equals(User.class)) {
+        if (clazz == User.class) {
             if(getUser(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
                 if(id != getUser(ctx.basicAuthCredentials().getUsername()).getId()){
                     youAreNotAdmin(ctx);
                 }
             }
+            checkDoesSuchUserExist(id);
             simpleModule.addDeserializer(User.class, new DeserializerForChangeUser(id));
         }
         objectMapper.registerModule(simpleModule);
@@ -90,6 +97,7 @@ public class MainController {
         dao.update((T) obj);
         updated(ctx);
     }
+
     public static <T> void delete(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
         checkDoesBasicAuthEmpty(ctx);
         ctx.header("content-type:app/json");
@@ -97,9 +105,16 @@ public class MainController {
         ObjectMapper objectMapper = new ObjectMapper();
         int id = Integer.parseInt(ctx.pathParam("id"));
         checkAuthorization(ctx);
-        if (clazz.equals(User.class)) {
+        if (clazz == User.class) {
             if(getUser(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
                 if(id != getUser(ctx.basicAuthCredentials().getUsername()).getId()){
+                    youAreNotAdmin(ctx);
+                }
+            }
+            checkDoesSuchUserExist(id);
+        }else if(clazz == Post.class){
+            if(getUser(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+                if(id != getPostUser(id).getId()){
                     youAreNotAdmin(ctx);
                 }
             }

@@ -207,4 +207,22 @@ public class User implements Filtration {
         s.add("dateOfBirthday");
         return s;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", role=" + role +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", dateOfBirthday='" + dateOfBirthday + '\'' +
+                ", dateOfRegister='" + dateOfRegister + '\'' +
+                ", phone='" + phone + '\'' +
+                ", fname='" + fname + '\'' +
+                ", lname='" + lname + '\'' +
+                ", city='" + city + '\'' +
+                ", country='" + country + '\'' +
+                '}';
+    }
 }

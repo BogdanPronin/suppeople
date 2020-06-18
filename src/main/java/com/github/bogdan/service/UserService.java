@@ -39,6 +39,15 @@ public class UserService {
         }
     }
 
+    public static void checkIsLoginInUse(String login,int userId) throws SQLException {
+        for(User user:userDao.queryForAll()){
+            if(user.getLogin().equals(login) && user.getId() != userId){
+
+                throw new WebException("This login is already in use",400);
+            }
+        }
+    }
+
     public static User getUser(String login) throws SQLException {
         for(User user: userDao.queryForAll()){
             if(user.getLogin().equals(login)){
