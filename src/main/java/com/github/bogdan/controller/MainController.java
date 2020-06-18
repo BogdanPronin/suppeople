@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
+
+import static com.github.bogdan.service.AreaOfActivityService.checkDoesSuchAreaOfActivityExist;
 import static com.github.bogdan.service.AuthService.checkAuthorization;
 import static com.github.bogdan.service.CtxService.*;
 import static com.github.bogdan.service.PaginationService.getPagination;
@@ -62,6 +64,8 @@ public class MainController {
 
         if (clazz == User.class) {
             simpleModule.addSerializer(User.class, new UserGetSerializer());
+        }else if(clazz == AreaOfActivity.class){
+
         }
 
         objectMapper.registerModule(simpleModule);
@@ -91,6 +95,9 @@ public class MainController {
             }
             checkDoesSuchUserExist(id);
             simpleModule.addDeserializer(User.class, new DeserializerForChangeUser(id));
+        }else if(clazz == AreaOfActivity.class){
+            simpleModule.addDeserializer(AreaOfActivity.class, new DeserializerForAreaOfActivity(id));
+            checkDoesSuchAreaOfActivityExist(id);
         }
         objectMapper.registerModule(simpleModule);
         Object obj = objectMapper.readValue(body, clazz);
@@ -118,7 +125,11 @@ public class MainController {
                     youAreNotAdmin(ctx);
                 }
             }
+        }else if(clazz == AreaOfActivity.class){
+            checkIsUserAdmin(getUser(ctx.basicAuthCredentials().getUsername()));
+            checkDoesSuchAreaOfActivityExist(id);
         }
+
         objectMapper.registerModule(simpleModule);
         Object obj = dao.queryForId(id);
         dao.delete((T) obj);

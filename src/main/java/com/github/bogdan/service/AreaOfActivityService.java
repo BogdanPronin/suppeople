@@ -26,6 +26,14 @@ public class AreaOfActivityService {
         }
     }
 
+    public static void checkDoesSuchAreaOfActivityExist(String name) throws SQLException {
+        for(AreaOfActivity a: areaOfActivityDao.queryForAll()){
+            if(a.getName().equals(name)){
+                throw new WebException("Such area of activity is already exist",400);
+            }
+        }
+    }
+
     public static AreaOfActivity getAreaOfActivity(int id) throws SQLException {
         return areaOfActivityDao.queryForId(id);
     }
