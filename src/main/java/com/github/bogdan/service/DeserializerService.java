@@ -3,6 +3,7 @@ package com.github.bogdan.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.github.bogdan.exception.WebException;
+import com.j256.ormlite.dao.Dao;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.time.LocalDate;
@@ -27,6 +28,18 @@ public class DeserializerService {
             return value;
         } else return node.get(field).asText();
     }
+
+
+    public static boolean checkNullFieldValue(JsonNode node, String field){
+        if(node instanceof NullNode){
+            return true;
+        }else if(node.get(field) == null){
+            return true;
+        }else if(node.get(field).asText()==""){
+            return true;
+        } else return false;
+    }
+
 
     public static String getOldPasswordFieldValue(JsonNode node, String field,String value){
         if(node instanceof NullNode){

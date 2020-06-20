@@ -3,14 +3,13 @@ package com.github.bogdan.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.github.bogdan.deserializer.DeserializerForAddPost;
-import com.github.bogdan.deserializer.DeserializerForAddUser;
-import com.github.bogdan.deserializer.DeserializerForAreaOfActivity;
-import com.github.bogdan.deserializer.DeserializerForChangeUser;
+import com.github.bogdan.deserializer.*;
 import com.github.bogdan.model.AreaOfActivity;
 import com.github.bogdan.model.Post;
 import com.github.bogdan.model.Role;
 import com.github.bogdan.model.User;
+import com.github.bogdan.serializer.AreaOfActivityGetSerializer;
+import com.github.bogdan.serializer.PostGetSerializer;
 import com.github.bogdan.serializer.UserGetSerializer;
 import com.j256.ormlite.dao.Dao;
 import io.javalin.http.Context;
@@ -62,11 +61,9 @@ public class MainController {
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        if (clazz == User.class) {
-            simpleModule.addSerializer(User.class, new UserGetSerializer());
-        }else if(clazz == AreaOfActivity.class){
-
-        }
+        simpleModule.addSerializer(User.class, new UserGetSerializer());
+        simpleModule.addSerializer(Post.class, new PostGetSerializer());
+        simpleModule.addSerializer(AreaOfActivity.class, new AreaOfActivityGetSerializer());
 
         objectMapper.registerModule(simpleModule);
 
@@ -98,9 +95,13 @@ public class MainController {
         }else if(clazz == AreaOfActivity.class){
             simpleModule.addDeserializer(AreaOfActivity.class, new DeserializerForAreaOfActivity(id));
             checkDoesSuchAreaOfActivityExist(id);
+        }else if(clazz == Post.class){
+            simpleModule.addDeserializer(Post.class,new DeserializerForChangePost(id,getUser(ctx.basicAuthCredentials().getUsername()).getId()));
         }
+
         objectMapper.registerModule(simpleModule);
         Object obj = objectMapper.readValue(body, clazz);
+
         dao.update((T) obj);
         updated(ctx);
     }

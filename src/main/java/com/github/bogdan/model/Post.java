@@ -22,17 +22,20 @@ public class Post implements Filtration {
     private String city;
     @DatabaseField
     private String country;
+    @DatabaseField
+    private String dateOfCreate;
 
     public Post() {
     }
 
-    public Post(User user, AreaOfActivity areaOfActivity, String task, Deadline deadline, String city, String country) {
+    public Post(User user, AreaOfActivity areaOfActivity, String task, Deadline deadline, String city, String country, String dateOfCreate) {
         this.user = user;
         this.areaOfActivity = areaOfActivity;
         this.task = task;
         this.deadline = deadline;
         this.city = city;
         this.country = country;
+        this.dateOfCreate = dateOfCreate;
     }
 
     public int getId() {
@@ -91,6 +94,14 @@ public class Post implements Filtration {
         this.country = country;
     }
 
+    public String getDateOfCreate() {
+        return dateOfCreate;
+    }
+
+    public void setDateOfCreate(String dateOfCreate) {
+        this.dateOfCreate = dateOfCreate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,12 +113,13 @@ public class Post implements Filtration {
                 Objects.equals(task, post.task) &&
                 Objects.equals(deadline, post.deadline) &&
                 Objects.equals(city, post.city) &&
-                Objects.equals(country, post.country);
+                Objects.equals(country, post.country) &&
+                Objects.equals(dateOfCreate, post.dateOfCreate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, areaOfActivity, task, deadline, city, country);
+        return Objects.hash(id, user, areaOfActivity, task, deadline, city, country, dateOfCreate);
     }
 
     @Override
@@ -118,6 +130,21 @@ public class Post implements Filtration {
         s.add("areaOfActivity");
         s.add("user");
         s.add("deadline");
+        s.add("dateOfCreate");
         return s;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", user=" + user +
+                ", areaOfActivity=" + areaOfActivity +
+                ", task='" + task + '\'' +
+                ", deadline=" + deadline +
+                ", city='" + city + '\'' +
+                ", country='" + country + '\'' +
+                ", dateOfCreate='" + dateOfCreate + '\'' +
+                '}';
     }
 }

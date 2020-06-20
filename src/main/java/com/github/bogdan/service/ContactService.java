@@ -13,7 +13,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import java.sql.SQLException;
 
 public class ContactService {
-    public static Dao<User, Integer> userDao;
+    static Dao<User, Integer> userDao;
     static {
         try {
             userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);

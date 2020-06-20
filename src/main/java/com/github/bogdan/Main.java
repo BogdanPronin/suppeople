@@ -8,6 +8,7 @@ import com.github.bogdan.controller.UserController;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
 import com.github.bogdan.model.AreaOfActivity;
+import com.github.bogdan.model.Deadline;
 import com.github.bogdan.model.Post;
 import com.github.bogdan.model.User;
 import com.github.bogdan.serializer.WebExceptionSerializer;
@@ -29,6 +30,7 @@ public class Main {
         Dao<User, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
         Dao<AreaOfActivity,Integer> areaOfActivityDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, AreaOfActivity.class);
         Dao<Post,Integer> postDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Post.class);
+        Dao<Deadline,Integer> deadlineDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Deadline.class);
 
         app.post("/users", ctx -> MainController.add(ctx,userDao,User.class));
         app.get("/users", ctx -> MainController.get(ctx,userDao, User.class));
@@ -42,8 +44,8 @@ public class Main {
 
         app.post("/post", ctx -> MainController.add(ctx,postDao,Post.class));
         app.get("/post", ctx -> MainController.get(ctx,postDao,Post.class));
-        app.patch("/post/:id", ctx -> MainController.get(ctx,postDao,Post.class));
-        app.delete("/post/:id", ctx -> MainController.get(ctx,postDao,Post.class));
+        app.patch("/post/:id", ctx -> MainController.change(ctx,postDao,Post.class));
+        app.delete("/post/:id", ctx -> MainController.delete(ctx,postDao,Post.class));
 
         app.exception(WebException.class, (e, ctx) -> {
             SimpleModule simpleModule = new SimpleModule();

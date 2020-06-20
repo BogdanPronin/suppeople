@@ -14,6 +14,7 @@ import com.j256.ormlite.dao.DaoManager;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import static com.github.bogdan.service.AreaOfActivityService.checkDoesSuchAreaOfActivityExist;
 import static com.github.bogdan.service.AreaOfActivityService.getAreaOfActivity;
@@ -59,7 +60,11 @@ public class DeserializerForAddPost extends StdDeserializer<Post> {
 
             String deadline = checkNullStringFieldValue(node,"deadline");
             Deadline deadlineObj = checkDeadline(deadline);
+            addDeadlineToBase(deadlineObj);
             post.setDeadline(deadlineObj);
+
+            LocalDate localDate = LocalDate.now();
+            post.setDateOfCreate(localDate.toString());
 
             return post;
         } catch (SQLException throwables) {
