@@ -10,6 +10,8 @@ import io.javalin.http.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+
 public class CtxService {
     static Logger LOGGER = LoggerFactory.getLogger(CtxService.class);
 
@@ -60,6 +62,13 @@ public class CtxService {
         if(ctx.queryParam(key)==null)
             return true;
         return false;
+    }
+    public static boolean doesQueryParamsEmpty(Context ctx, ArrayList<String> s){
+        for(String a:s){
+            if(ctx.queryParam(a)!=null)
+                return false;
+        }
+        return true;
     }
     public static int getPage(Context ctx){
         if(ctx.queryParam("page")==null){

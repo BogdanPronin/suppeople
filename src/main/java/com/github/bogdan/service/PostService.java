@@ -45,4 +45,8 @@ public class PostService {
         }
         throw new WebException("It isn't your post",400);
     }
+
+    public static Post getPost(int postId) throws SQLException {
+        return postDao.queryForId(postId);
+    }
 }

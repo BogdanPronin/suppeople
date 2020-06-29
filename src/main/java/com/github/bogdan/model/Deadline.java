@@ -47,4 +47,8 @@ public class Deadline {
         this.hours = hours;
     }
 
+    @Override
+    public String toString() {
+        return days + "d"+hours+"h"+minutes+"m";
+    }
 }

@@ -18,10 +18,9 @@ import java.time.LocalDate;
 
 import static com.github.bogdan.service.AreaOfActivityService.checkDoesSuchAreaOfActivityExist;
 import static com.github.bogdan.service.AreaOfActivityService.getAreaOfActivity;
-import static com.github.bogdan.service.DeserializerService.checkNullStringFieldValue;
+import static com.github.bogdan.service.DeserializerService.getStringFieldValue;
 import static com.github.bogdan.service.DeserializerService.getIntFieldValue;
 import static com.github.bogdan.service.LocalDateService.*;
-import static com.github.bogdan.service.UserService.checkDoesSuchUserExist;
 import static com.github.bogdan.service.UserService.getUser;
 
 public class DeserializerForAddPost extends StdDeserializer<Post> {
@@ -55,10 +54,10 @@ public class DeserializerForAddPost extends StdDeserializer<Post> {
             checkDoesSuchAreaOfActivityExist(areaOfActivity);
             post.setAreaOfActivity(getAreaOfActivity(areaOfActivity));
 
-            String task = checkNullStringFieldValue(node,"task");
+            String task = getStringFieldValue(node,"task");
             post.setTask(task);
 
-            String deadline = checkNullStringFieldValue(node,"deadline");
+            String deadline = getStringFieldValue(node,"deadline");
             Deadline deadlineObj = checkDeadline(deadline);
             addDeadlineToBase(deadlineObj);
             post.setDeadline(deadlineObj);

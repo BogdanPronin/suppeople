@@ -136,15 +136,6 @@ public class Post implements Filtration {
 
     @Override
     public String toString() {
-        return "Post{" +
-                "id=" + id +
-                ", user=" + user +
-                ", areaOfActivity=" + areaOfActivity +
-                ", task='" + task + '\'' +
-                ", deadline=" + deadline +
-                ", city='" + city + '\'' +
-                ", country='" + country + '\'' +
-                ", dateOfCreate='" + dateOfCreate + '\'' +
-                '}';
+        return String.valueOf(id);
     }
 }

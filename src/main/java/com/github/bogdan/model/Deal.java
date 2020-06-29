@@ -13,9 +13,6 @@ public class Deal implements Filtration{
     private int id;
 
     @DatabaseField(foreign = true,foreignAutoRefresh = true)
-    private Post post;
-
-    @DatabaseField(foreign = true,foreignAutoRefresh = true)
     private PostApplication postApplication;
 
     @DatabaseField
@@ -30,8 +27,7 @@ public class Deal implements Filtration{
     public Deal() {
     }
 
-    public Deal(Post post, PostApplication postApplication, String startDate, Status status, String endDate) {
-        this.post = post;
+    public Deal( PostApplication postApplication, String startDate, Status status, String endDate) {
         this.postApplication = postApplication;
         this.startDate = startDate;
         this.status = status;
@@ -46,13 +42,6 @@ public class Deal implements Filtration{
         this.id = id;
     }
 
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
 
     public PostApplication getPostApplication() {
         return postApplication;
@@ -92,7 +81,6 @@ public class Deal implements Filtration{
         if (o == null || getClass() != o.getClass()) return false;
         Deal deal = (Deal) o;
         return id == deal.id &&
-                Objects.equals(post, deal.post) &&
                 Objects.equals(postApplication, deal.postApplication) &&
                 Objects.equals(startDate, deal.startDate) &&
                 status == deal.status &&
@@ -101,7 +89,7 @@ public class Deal implements Filtration{
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, post, postApplication, startDate, status, endDate);
+        return Objects.hash(id, postApplication, startDate, status, endDate);
     }
 
     @Override

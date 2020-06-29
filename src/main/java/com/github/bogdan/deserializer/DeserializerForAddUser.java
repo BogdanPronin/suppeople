@@ -32,23 +32,23 @@ public class DeserializerForAddUser extends StdDeserializer<User> {
             JsonNode node = jsonParser.getCodec().readTree(jsonParser);
             User u = new User();
 
-            String fname = checkNullStringFieldValue(node,"fname");
+            String fname = getStringFieldValue(node,"fname");
             u.setFname(fname);
 
-            String lname = checkNullStringFieldValue(node,"lname");
+            String lname = getStringFieldValue(node,"lname");
             u.setLname(lname);
 
-            String login = checkNullStringFieldValue(node,"login");
+            String login = getStringFieldValue(node,"login");
             u.setLogin(login);
             checkIsLoginInUse(login);
 
 
-            String email = checkNullStringFieldValue(node,"email");
+            String email = getStringFieldValue(node,"email");
             u.setEmail(email);
             checkValidateEmail(email);
             checkIsEmailAlreadyInUse(email);
 
-            String phone = checkNullStringFieldValue(node,"phone");
+            String phone = getStringFieldValue(node,"phone");
             u.setPhone(phone);
             checkValidatePhone(phone);
             checkIsPhoneAlreadyInUse(phone);
@@ -56,14 +56,14 @@ public class DeserializerForAddUser extends StdDeserializer<User> {
             LocalDate localDate = LocalDate.now();
             u.setDateOfRegister(localDate.toString());
 
-            String dateOfBirthday = checkNullStringFieldValue(node,"dateOfBirthday");
+            String dateOfBirthday = getStringFieldValue(node,"dateOfBirthday");
             checkLocalDateFormat(dateOfBirthday);
             checkAge(dateOfBirthday);
             u.setDateOfBirthday(dateOfBirthday);
 
             u.setRole(Role.USER);
 
-            String password = checkNullStringFieldValue(node,"password");
+            String password = getStringFieldValue(node,"password");
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12));
             u.setPassword(hashedPassword);
 

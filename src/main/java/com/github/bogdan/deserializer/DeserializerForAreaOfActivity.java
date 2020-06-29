@@ -6,13 +6,12 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.github.bogdan.model.AreaOfActivity;
-import com.github.bogdan.model.User;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
 import static com.github.bogdan.service.AreaOfActivityService.checkDoesSuchAreaOfActivityExist;
-import static com.github.bogdan.service.DeserializerService.checkNullStringFieldValue;
+import static com.github.bogdan.service.DeserializerService.getStringFieldValue;
 
 public class DeserializerForAreaOfActivity extends StdDeserializer<AreaOfActivity> {
     public DeserializerForAreaOfActivity() {
@@ -39,7 +38,7 @@ public class DeserializerForAreaOfActivity extends StdDeserializer<AreaOfActivit
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
         AreaOfActivity a = new AreaOfActivity();
 
-        a.setName(checkNullStringFieldValue(node,"name"));
+        a.setName(getStringFieldValue(node,"name"));
         try {
             checkDoesSuchAreaOfActivityExist(a.getName());
         } catch (SQLException throwables) {

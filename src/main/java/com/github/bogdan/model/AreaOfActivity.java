@@ -57,4 +57,9 @@ public class AreaOfActivity implements Filtration{
     public ArrayList<String> getQueryParams() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(id);
+    }
 }

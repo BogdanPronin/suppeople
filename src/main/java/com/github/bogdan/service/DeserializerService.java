@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 public class DeserializerService {
 
-    public static String checkNullStringFieldValue(JsonNode node, String field){
+    public static String getStringFieldValue(JsonNode node, String field){
         checkForExplicitlyNullField(node.get(field),"Necessary field \""+field+ "\" can't be null");
         if(node.get(field) == null){
             throw new WebException("Necessary field \""+field+ "\" can't be null",400);
