@@ -24,7 +24,7 @@ public class DeserializerService {
             return value;
         }else if(node.get(field) == null){
             return value;
-        }else if(node.get(field).asText()==""){
+        }else if(node.get(field).asText().isEmpty()){
             return value;
         } else return node.get(field).asText();
     }

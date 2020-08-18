@@ -24,4 +24,10 @@ public class DealService {
             throw new WebException("Such deal doesn't exist",400);
         }
     }
+    public static void checkIsItUsersDeal(int dealId,int userId) throws SQLException {
+        if (dealDao.queryForId(dealId).getPostApplication().getPost().getUser().getId() == userId) {
+            return;
+        }
+        throw new WebException("It isn't your deal",400);
+    }
 }

@@ -94,6 +94,8 @@ public class Deal implements Filtration{
 
     @Override
     public ArrayList<String> getQueryParams() {
-        return null;
+        ArrayList<String> s = new ArrayList<>();
+        s.add(String.valueOf(id));
+        return s;
     }
 }

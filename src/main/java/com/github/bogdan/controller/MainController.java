@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import static com.github.bogdan.service.AreaOfActivityService.checkDoesSuchAreaOfActivityExist;
 import static com.github.bogdan.service.AuthService.checkAuthorization;
 import static com.github.bogdan.service.CtxService.*;
+import static com.github.bogdan.service.DealService.checkDoesSuchDealExist;
+import static com.github.bogdan.service.DealService.checkIsItUsersDeal;
 import static com.github.bogdan.service.PaginationService.getPagination;
 import static com.github.bogdan.service.PostApplicationService.checkDoesSuchApplicationExist;
 import static com.github.bogdan.service.PostApplicationService.checkIsItUsersApplication;
@@ -71,7 +73,6 @@ public class MainController {
         simpleModule.addSerializer(User.class, new UserGetSerializer());
         simpleModule.addSerializer(Post.class, new PostGetSerializer());
         simpleModule.addSerializer(AreaOfActivity.class, new AreaOfActivityGetSerializer());
-        simpleModule.addSerializer(PostApplication.class, new PostApplicationGetSerializer());
 
         objectMapper.registerModule(simpleModule);
         int page = getPage(ctx);
@@ -84,9 +85,17 @@ public class MainController {
         }else if(clazz == Post.class){
             Post p = new Post();
             params.addAll(p.getQueryParams());
+            simpleModule.addSerializer(PostApplication.class, new PostApplicationGetSerializer());
         }else if(clazz == PostApplication.class){
             PostApplication p = new PostApplication();
             params.addAll(p.getQueryParams());
+            simpleModule.addSerializer(PostApplication.class, new PostApplicationSerializer());
+        }else if(clazz == Deal.class){
+            Deal d = new Deal();
+            params.addAll(d.getQueryParams());
+            simpleModule.addSerializer(Post.class, new PostDealSerializer());
+        }else if(clazz == UserArea.class){
+            simpleModule.addSerializer(UserArea.class,new UserAreaSerializer());
         }
 
         String serialized;
@@ -163,8 +172,13 @@ public class MainController {
             checkDoesSuchAreaOfActivityExist(id);
         }else if(clazz == PostApplication.class){
             if(getUser(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
-                checkDoesSuchApplicationExist(id);
                 checkIsItUsersApplication(id,getUser(ctx.basicAuthCredentials().getUsername()).getId());
+            }
+            checkDoesSuchApplicationExist(id);
+        }else if(clazz == Deal.class){
+            checkDoesSuchDealExist(id);
+            if(getUser(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+                checkIsItUsersDeal(id,getUser(ctx.basicAuthCredentials().getUsername()).getId());
             }
         }
 

@@ -49,11 +49,18 @@ public class Main {
 
         app.post("/postApplication", ctx -> MainController.add(ctx,postApplicationDao,PostApplication.class));
         app.patch("/postApplication/:id", ctx -> MainController.change(ctx,postApplicationDao,PostApplication.class));
+        app.get("/postApplication", ctx -> MainController.get(ctx,postApplicationDao,PostApplication.class));
+        app.delete("/postApplication", ctx -> MainController.get(ctx,postApplicationDao,PostApplication.class));
 
         app.post("/userArea",ctx -> MainController.add(ctx,userAreaDao,UserArea.class));
+        app.patch("/userArea/:id", ctx -> MainController.change(ctx,userAreaDao,UserArea.class));
+        app.delete("/userArea/:id",ctx -> MainController.delete(ctx,userAreaDao,UserArea.class));
+        app.get("/userArea",ctx -> MainController.get(ctx,userAreaDao,UserArea.class));
 
         app.post("/deal",ctx -> MainController.add(ctx,dealDao,Deal.class));
+        app.get("/deal",ctx -> MainController.get(ctx,dealDao,Deal.class));
         app.patch("/deal/:id",ctx -> MainController.change(ctx,dealDao,Deal.class));
+        app.delete("/deal/:id",ctx -> MainController.delete(ctx,dealDao,Deal.class));
 
         app.exception(IllegalArgumentException.class,(e, ctx) ->{
             WebException w = new WebException("Such enum constant doesn't exist",400);
