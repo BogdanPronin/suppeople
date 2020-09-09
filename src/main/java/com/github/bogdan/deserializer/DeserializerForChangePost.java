@@ -6,19 +6,16 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
-import com.github.bogdan.model.Deadline;
 import com.github.bogdan.model.Post;
+import com.github.bogdan.service.CategoryService;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static com.github.bogdan.service.AreaOfActivityService.checkDoesSuchAreaOfActivityExist;
-import static com.github.bogdan.service.AreaOfActivityService.getAreaOfActivity;
+import static com.github.bogdan.service.CategoryService.getCategory;
 import static com.github.bogdan.service.DeserializerService.*;
-import static com.github.bogdan.service.LocalDateService.addDeadlineToBase;
-import static com.github.bogdan.service.LocalDateService.checkDeadline;
 import static com.github.bogdan.service.PostService.checkDoesSuchPostExist;
 import static com.github.bogdan.service.PostService.checkPostUser;
 import static com.github.bogdan.service.UserService.getUser;
@@ -65,25 +62,17 @@ public class DeserializerForChangePost extends StdDeserializer<Post> {
 
             p.setUser(getUser(userId));
 
-            String task = getOldStringFieldValue(node,"task",postBase.getTask());
-            p.setTask(task);
+            String task = getOldStringFieldValue(node,"task",postBase.getMessage());
+            p.setMessage(task);
 
             if(checkNullFieldValue(node,"areaOfActivity")){
-                p.setAreaOfActivity(postBase.getAreaOfActivity());
+                p.setCategory(postBase.getCategory());
             }else {
-                checkDoesSuchAreaOfActivityExist(node.get("areaOfActivity").asInt());
-                p.setAreaOfActivity(getAreaOfActivity(node.get("areaOfActivity").asInt()));
+                CategoryService.checkDoesSuchCategoryExist(node.get("areaOfActivity").asInt());
+                p.setCategory(getCategory(node.get("areaOfActivity").asInt()));
             }
 
-            if(checkNullFieldValue(node,"deadline")){
-                p.setDeadline(postBase.getDeadline());
-            }else {
 
-                String s =node.get("deadline").asText();
-                Deadline deadline = checkDeadline(s);
-                addDeadlineToBase(deadline);
-                p.setDeadline(deadline);
-            }
 
             p.setDateOfCreate(postBase.getDateOfCreate());
             return p;

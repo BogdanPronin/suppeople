@@ -5,21 +5,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.github.bogdan.model.AreaOfActivity;
+import com.github.bogdan.model.Category;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static com.github.bogdan.service.AreaOfActivityService.checkDoesSuchAreaOfActivityExist;
+import static com.github.bogdan.service.CategoryService.checkDoesSuchCategoryExist;
 import static com.github.bogdan.service.DeserializerService.getStringFieldValue;
 
-public class DeserializerForAreaOfActivity extends StdDeserializer<AreaOfActivity> {
-    public DeserializerForAreaOfActivity() {
-        super(AreaOfActivity.class);
+public class DeserializerForCategory extends StdDeserializer<Category> {
+    public DeserializerForCategory() {
+        super(Category.class);
     }
 
-    public DeserializerForAreaOfActivity( int id) {
-        super(AreaOfActivity.class);
+    public DeserializerForCategory(int id) {
+        super(Category.class);
         this.id = id;
     }
 
@@ -34,13 +34,13 @@ public class DeserializerForAreaOfActivity extends StdDeserializer<AreaOfActivit
     }
 
     @Override
-    public AreaOfActivity deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+    public Category deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-        AreaOfActivity a = new AreaOfActivity();
+        Category a = new Category();
 
         a.setName(getStringFieldValue(node,"name"));
         try {
-            checkDoesSuchAreaOfActivityExist(a.getName());
+            checkDoesSuchCategoryExist(a.getName());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

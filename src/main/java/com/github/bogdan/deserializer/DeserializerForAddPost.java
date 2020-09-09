@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
-import com.github.bogdan.model.Deadline;
 import com.github.bogdan.model.Post;
 import com.github.bogdan.model.User;
+import com.github.bogdan.service.CategoryService;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 
@@ -16,11 +16,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-import static com.github.bogdan.service.AreaOfActivityService.checkDoesSuchAreaOfActivityExist;
-import static com.github.bogdan.service.AreaOfActivityService.getAreaOfActivity;
+import static com.github.bogdan.service.CategoryService.checkDoesSuchCategoryExist;
+import static com.github.bogdan.service.CategoryService.getCategory;
 import static com.github.bogdan.service.DeserializerService.getStringFieldValue;
 import static com.github.bogdan.service.DeserializerService.getIntFieldValue;
-import static com.github.bogdan.service.LocalDateService.*;
 import static com.github.bogdan.service.UserService.getUser;
 
 public class DeserializerForAddPost extends StdDeserializer<Post> {
@@ -51,16 +50,12 @@ public class DeserializerForAddPost extends StdDeserializer<Post> {
             post.setUser(user);
 
             int areaOfActivity = getIntFieldValue(node,"areaOfActivity");
-            checkDoesSuchAreaOfActivityExist(areaOfActivity);
-            post.setAreaOfActivity(getAreaOfActivity(areaOfActivity));
+            CategoryService.checkDoesSuchCategoryExist(areaOfActivity);
+            post.setCategory(getCategory(areaOfActivity));
 
             String task = getStringFieldValue(node,"task");
-            post.setTask(task);
+            post.setMessage(task);
 
-            String deadline = getStringFieldValue(node,"deadline");
-            Deadline deadlineObj = checkDeadline(deadline);
-            addDeadlineToBase(deadlineObj);
-            post.setDeadline(deadlineObj);
 
             LocalDate localDate = LocalDate.now();
             post.setDateOfCreate(localDate.toString());

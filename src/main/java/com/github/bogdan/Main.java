@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.bogdan.controller.MainController;
-import com.github.bogdan.controller.UserController;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
 import com.github.bogdan.model.*;
@@ -25,22 +24,19 @@ public class Main {
         app.start(22867);
 
         Dao<User, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
-        Dao<AreaOfActivity,Integer> areaOfActivityDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, AreaOfActivity.class);
+        Dao<Category,Integer> categoryDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Category.class);
         Dao<Post,Integer> postDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Post.class);
-        Dao<Deadline,Integer> deadlineDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Deadline.class);
         Dao<PostApplication,Integer> postApplicationDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,PostApplication.class);
-        Dao<UserArea,Integer> userAreaDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,UserArea.class);
-        Dao<Deal,Integer> dealDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,Deal.class);
 
         app.post("/users", ctx -> MainController.add(ctx,userDao,User.class));
         app.get("/users", ctx -> MainController.get(ctx,userDao, User.class));
         app.patch("/users/:id", ctx -> MainController.change(ctx,userDao,User.class));
         app.delete("/users/:id",ctx -> MainController.delete(ctx,userDao,User.class));
 
-        app.post("/areaOfActivity",ctx -> MainController.add(ctx,areaOfActivityDao,AreaOfActivity.class));
-        app.get("/areaOfActivity", ctx -> MainController.get(ctx,areaOfActivityDao, AreaOfActivity.class));
-        app.patch("/areaOfActivity/:id",ctx -> MainController.change(ctx,areaOfActivityDao,AreaOfActivity.class));
-        app.delete("/areaOfActivity/:id", ctx -> MainController.delete(ctx,areaOfActivityDao, AreaOfActivity.class));
+        app.post("/category",ctx -> MainController.add(ctx,categoryDao, Category.class));
+        app.get("/category", ctx -> MainController.get(ctx,categoryDao, Category.class));
+        app.patch("/category/:id",ctx -> MainController.change(ctx,categoryDao, Category.class));
+        app.delete("/category/:id", ctx -> MainController.delete(ctx,categoryDao, Category.class));
 
         app.post("/post", ctx -> MainController.add(ctx,postDao,Post.class));
         app.get("/post", ctx -> MainController.get(ctx,postDao,Post.class));
@@ -52,15 +48,6 @@ public class Main {
         app.get("/postApplication", ctx -> MainController.get(ctx,postApplicationDao,PostApplication.class));
         app.delete("/postApplication", ctx -> MainController.get(ctx,postApplicationDao,PostApplication.class));
 
-        app.post("/userArea",ctx -> MainController.add(ctx,userAreaDao,UserArea.class));
-        app.patch("/userArea/:id", ctx -> MainController.change(ctx,userAreaDao,UserArea.class));
-        app.delete("/userArea/:id",ctx -> MainController.delete(ctx,userAreaDao,UserArea.class));
-        app.get("/userArea",ctx -> MainController.get(ctx,userAreaDao,UserArea.class));
-
-        app.post("/deal",ctx -> MainController.add(ctx,dealDao,Deal.class));
-        app.get("/deal",ctx -> MainController.get(ctx,dealDao,Deal.class));
-        app.patch("/deal/:id",ctx -> MainController.change(ctx,dealDao,Deal.class));
-        app.delete("/deal/:id",ctx -> MainController.delete(ctx,dealDao,Deal.class));
 
         app.exception(IllegalArgumentException.class,(e, ctx) ->{
             WebException w = new WebException("Such enum constant doesn't exist",400);

@@ -1,6 +1,5 @@
 package com.github.bogdan.service;
 
-import com.github.bogdan.model.User;
 import com.j256.ormlite.dao.Dao;
 import io.javalin.http.Context;
 import org.slf4j.Logger;

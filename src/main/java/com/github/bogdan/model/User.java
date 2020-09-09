@@ -6,7 +6,6 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static com.github.bogdan.service.ClassService.getFieldsName;
 
 @DatabaseTable(tableName = "user")
 public class User implements Filtration {
@@ -44,13 +43,11 @@ public class User implements Filtration {
     @DatabaseField
     private String city;
 
-    @DatabaseField
-    private String country;
 
     public User() {
     }
 
-    public User(Role role, String login, String password, String email, String dateOfBirthday, String dateOfRegister, String phone, String fname, String lname, String city, String country) {
+    public User(Role role, String login, String password, String email, String dateOfBirthday, String dateOfRegister, String phone, String fname, String lname, String city) {
         this.role = role;
         this.login = login;
         this.password = password;
@@ -61,7 +58,6 @@ public class User implements Filtration {
         this.fname = fname;
         this.lname = lname;
         this.city = city;
-        this.country = country;
     }
 
     public User(Role role, String login, String password, String email, String dateOfBirthday, String dateOfRegister, String phone, String fname, String lname) {
@@ -156,13 +152,6 @@ public class User implements Filtration {
         this.city = city;
     }
 
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
 
     public Role getRole() {
         return role;
@@ -187,13 +176,12 @@ public class User implements Filtration {
                 Objects.equals(phone, user.phone) &&
                 Objects.equals(fname, user.fname) &&
                 Objects.equals(lname, user.lname) &&
-                Objects.equals(city, user.city) &&
-                Objects.equals(country, user.country);
+                Objects.equals(city, user.city);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, role, login, password, email, dateOfBirthday, dateOfRegister, phone, fname, lname, city, country);
+        return Objects.hash(id, role, login, password, email, dateOfBirthday, dateOfRegister, phone, fname, lname, city);
     }
 
     @Override

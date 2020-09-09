@@ -3,14 +3,10 @@ package com.github.bogdan.service;
 
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
-import com.github.bogdan.model.Deadline;
-import com.github.bogdan.model.Post;
-import com.github.bogdan.model.User;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 
 import java.sql.SQLException;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
@@ -62,39 +58,6 @@ public class LocalDateService {
         }
     }
 
-    public static Deadline checkDeadline(String deadline){
-        if(!Pattern.matches("^[0-9]{1,3}[d][0-9]{1,3}[h][0-9]{1,3}[m]$",deadline)){
-            throw new WebException("Wrong deadline format, correct format \"$d$h$m\"",400);
-        }else{
-            Pattern pattern = Pattern.compile("[dhm]");
-            String[] a = pattern.split(deadline);
-            ArrayList<String> list = new ArrayList<>();
-            list.addAll(Arrays.asList(a));
-            int days = Integer.parseInt(list.get(0));
-            int hours = Integer.parseInt(list.get(1));
-            int minutes = Integer.parseInt(list.get(2));
-            hours += minutes/60;
-            minutes = minutes%60;
-            days += hours/24;
-            hours = hours%24;
-            Deadline deadlineObj = new Deadline(days,minutes,hours);
-            return deadlineObj;
-        }
-    }
-
-    static Dao<Deadline,Integer> deadlineDao;
-
-    static {
-        try {
-            deadlineDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Deadline.class);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
-    public static void addDeadlineToBase(Deadline deadline) throws SQLException {
-        deadlineDao.create(deadline);
-    }
 
 //    public static void checkDoesSuchDeadlineExist(int id){
 //

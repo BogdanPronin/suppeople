@@ -11,16 +11,13 @@ public class DatabaseConfiguration {
     public static ConnectionSource connectionSource;
     static {
         try{
-            connectionSource = new JdbcConnectionSource("jdbc:sqlite:/Users/bogdan/Desktop/freelance.db");
+            connectionSource = new JdbcConnectionSource("jdbc:sqlite:/Users/bogdan/Desktop/suppeople.db");
             TableUtils.createTableIfNotExists(connectionSource, User.class);
-            TableUtils.createTableIfNotExists(connectionSource, AreaOfActivity.class);
-            TableUtils.createTableIfNotExists(connectionSource, Deal.class);
+            TableUtils.createTableIfNotExists(connectionSource, Category.class);
             TableUtils.createTableIfNotExists(connectionSource, Post.class);
             TableUtils.createTableIfNotExists(connectionSource, PostApplication.class);
             TableUtils.createTableIfNotExists(connectionSource, User.class);
-            TableUtils.createTableIfNotExists(connectionSource,UserArea.class);
-            TableUtils.createTableIfNotExists(connectionSource,Deadline.class);
-      } catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

@@ -6,8 +6,8 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.ArrayList;
 import java.util.Objects;
 
-@DatabaseTable(tableName = "area_of_activity")
-public class AreaOfActivity implements Filtration{
+@DatabaseTable(tableName = "category")
+public class Category implements Filtration{
 
     @DatabaseField(generatedId = true)
     private int id;
@@ -15,10 +15,10 @@ public class AreaOfActivity implements Filtration{
     @DatabaseField(unique = true)
     private String name;
 
-    public AreaOfActivity() {
+    public Category() {
     }
 
-    public AreaOfActivity(int id, String name) {
+    public Category(int id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -43,7 +43,7 @@ public class AreaOfActivity implements Filtration{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AreaOfActivity that = (AreaOfActivity) o;
+        Category that = (Category) o;
         return id == that.id &&
                 Objects.equals(name, that.name);
     }

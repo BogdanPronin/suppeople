@@ -13,29 +13,29 @@ public class Post implements Filtration {
     @DatabaseField(foreign = true,foreignAutoRefresh = true)
     private User user;
     @DatabaseField(foreign = true,foreignAutoRefresh = true)
-    private AreaOfActivity areaOfActivity;
+    private Category category;
     @DatabaseField
-    private String task;
-    @DatabaseField(foreign = true,foreignAutoRefresh = true)
-    private Deadline deadline;
+    private String message;
     @DatabaseField
     private String city;
     @DatabaseField
-    private String country;
+    private String image;
     @DatabaseField
     private String dateOfCreate;
+    @DatabaseField
+    private Status status;
 
     public Post() {
     }
 
-    public Post(User user, AreaOfActivity areaOfActivity, String task, Deadline deadline, String city, String country, String dateOfCreate) {
+    public Post(User user, Category category, String message, String city, String image, String dateOfCreate,Status status) {
         this.user = user;
-        this.areaOfActivity = areaOfActivity;
-        this.task = task;
-        this.deadline = deadline;
+        this.category = category;
+        this.message = message;
         this.city = city;
-        this.country = country;
+        this.image = image;
         this.dateOfCreate = dateOfCreate;
+        this.status = status;
     }
 
     public int getId() {
@@ -54,29 +54,22 @@ public class Post implements Filtration {
         this.user = user;
     }
 
-    public AreaOfActivity getAreaOfActivity() {
-        return areaOfActivity;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setAreaOfActivity(AreaOfActivity areaOfActivity) {
-        this.areaOfActivity = areaOfActivity;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
-    public String getTask() {
-        return task;
+    public String getMessage() {
+        return message;
     }
 
-    public void setTask(String task) {
-        this.task = task;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public Deadline getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(Deadline deadline) {
-        this.deadline = deadline;
-    }
 
     public String getCity() {
         return city;
@@ -86,12 +79,12 @@ public class Post implements Filtration {
         this.city = city;
     }
 
-    public String getCountry() {
-        return country;
+    public String getImage() {
+        return image;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getDateOfCreate() {
@@ -102,6 +95,14 @@ public class Post implements Filtration {
         this.dateOfCreate = dateOfCreate;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,28 +110,27 @@ public class Post implements Filtration {
         Post post = (Post) o;
         return id == post.id &&
                 Objects.equals(user, post.user) &&
-                Objects.equals(areaOfActivity, post.areaOfActivity) &&
-                Objects.equals(task, post.task) &&
-                Objects.equals(deadline, post.deadline) &&
+                Objects.equals(category, post.category) &&
+                Objects.equals(message, post.message) &&
                 Objects.equals(city, post.city) &&
-                Objects.equals(country, post.country) &&
-                Objects.equals(dateOfCreate, post.dateOfCreate);
+                Objects.equals(image, post.image) &&
+                Objects.equals(dateOfCreate, post.dateOfCreate) &&
+                status == post.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, areaOfActivity, task, deadline, city, country, dateOfCreate);
+        return Objects.hash(id, user, category, message, city, image, dateOfCreate, status);
     }
 
     @Override
     public ArrayList<String> getQueryParams() {
         ArrayList<String> s = new ArrayList<>();
         s.add("city");
-        s.add("country");
         s.add("areaOfActivity");
         s.add("user");
-        s.add("deadline");
         s.add("dateOfCreate");
+        s.add("status");
         return s;
     }
 
