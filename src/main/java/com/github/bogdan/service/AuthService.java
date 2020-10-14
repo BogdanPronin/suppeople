@@ -21,7 +21,7 @@ public class AuthService {
         String password = ctx.basicAuthCredentials().getPassword();
         Dao<User, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
         for(User u:userDao.queryForAll()){
-            if(u.getLogin().equals(login) && BCrypt.checkpw(password,u.getPassword())){
+            if((u.getPhone().equals(login) || u.getEmail().equals(login)) && BCrypt.checkpw(password,u.getPassword())){
                 return true;
             }
         }
@@ -29,6 +29,7 @@ public class AuthService {
     }
     public static void checkAuthorization(Context ctx) throws SQLException {
         if(!authorization(ctx))
-            throw new WebException("Authorization failed",400);
+            throw new WebException("Ошибка авторизации",400);
     }
+
 }

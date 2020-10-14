@@ -18,15 +18,15 @@ public class UserGetSerializer extends StdSerializer<User> {
         jsonGenerator.writeNumberField("id",user.getId());
         jsonGenerator.writeStringField("fname",user.getFname());
         jsonGenerator.writeStringField("lname",user.getLname());
-        jsonGenerator.writeStringField("login",user.getLogin());
         jsonGenerator.writeStringField("dateOfBirthday",user.getDateOfBirthday());
         jsonGenerator.writeStringField("dateOfRegister",user.getDateOfRegister());
-        jsonGenerator.writeStringField("phone",user.getPhone());
-        jsonGenerator.writeStringField("email",user.getEmail());
+        if(user.isPhoneIsShown()){
+            jsonGenerator.writeStringField("phone",user.getPhone());
+        }
+        if(user.isEmailIsShown()) {
+            jsonGenerator.writeStringField("email", user.getEmail());
+        }
         jsonGenerator.writeStringField("city",user.getCity());
-        jsonGenerator.writeArrayFieldStart("areaOfActivities");
-
-        jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
     }
 }

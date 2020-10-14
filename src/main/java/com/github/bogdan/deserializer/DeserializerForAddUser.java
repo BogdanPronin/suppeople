@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.github.bogdan.exception.WebException;
 import com.github.bogdan.model.Role;
 import com.github.bogdan.model.User;
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -38,20 +39,27 @@ public class DeserializerForAddUser extends StdDeserializer<User> {
             String lname = getStringFieldValue(node,"lname");
             u.setLname(lname);
 
-            String login = getStringFieldValue(node,"login");
-            u.setLogin(login);
-            checkIsLoginInUse(login);
+            String email = getOldStringFieldValue(node,"email",null);
+            if(!email.equals(null)) {
+                u.setEmail(email);
+                checkValidateEmail(email);
+                checkIsEmailAlreadyInUse(email);
+            }
 
+            String phone = getOldStringFieldValue(node,"phone",null);
+            if(!phone.equals(null)){
+                u.setPhone(phone);
+                checkValidatePhone(phone);
+                checkIsPhoneAlreadyInUse(phone);
+            }
 
-            String email = getStringFieldValue(node,"email");
-            u.setEmail(email);
-            checkValidateEmail(email);
-            checkIsEmailAlreadyInUse(email);
+            checkIsEmailPhoneNull(phone,email);
 
-            String phone = getStringFieldValue(node,"phone");
-            u.setPhone(phone);
-            checkValidatePhone(phone);
-            checkIsPhoneAlreadyInUse(phone);
+            boolean phoneIsShown = getOldBooleanFieldValue(node,"phoneIsShown",false);
+            u.setPhoneIsShown(phoneIsShown);
+
+            boolean emailIsShown =  getOldBooleanFieldValue(node,"emailIsShown",false);
+            u.setEmailIsShown(emailIsShown);
 
             LocalDate localDate = LocalDate.now();
             u.setDateOfRegister(localDate.toString());
@@ -67,6 +75,8 @@ public class DeserializerForAddUser extends StdDeserializer<User> {
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12));
             u.setPassword(hashedPassword);
 
+            int city = getIntFieldValue(node,"city");
+            checkDoesCityExist(city);
 
             return u;
 

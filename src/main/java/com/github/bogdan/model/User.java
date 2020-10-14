@@ -16,14 +16,8 @@ public class User implements Filtration {
     @DatabaseField
     private Role role;
 
-    @DatabaseField(unique = true)
-    private String login;
-
     @DatabaseField
     private String password;
-
-    @DatabaseField(unique = true)
-    private String email;
 
     @DatabaseField
     private String dateOfBirthday;
@@ -31,8 +25,17 @@ public class User implements Filtration {
     @DatabaseField
     private String dateOfRegister;
 
-    @DatabaseField
+    @DatabaseField(unique = true)
+    private String email;
+
+    @DatabaseField(unique = true)
     private String phone;
+
+    @DatabaseField
+    private boolean phoneIsShown;
+
+    @DatabaseField
+    private boolean emailIsShown;
 
     @DatabaseField
     private String fname;
@@ -43,33 +46,25 @@ public class User implements Filtration {
     @DatabaseField
     private String city;
 
+    @DatabaseField
+    private int postsQt;
 
     public User() {
     }
 
-    public User(Role role, String login, String password, String email, String dateOfBirthday, String dateOfRegister, String phone, String fname, String lname, String city) {
+    public User(Role role, String password, String dateOfBirthday, String dateOfRegister, String email, String phone, boolean phoneIsShown, boolean emailIsShown, String fname, String lname, String city, int postsQt) {
         this.role = role;
-        this.login = login;
         this.password = password;
-        this.email = email;
         this.dateOfBirthday = dateOfBirthday;
         this.dateOfRegister = dateOfRegister;
+        this.email = email;
         this.phone = phone;
+        this.phoneIsShown = phoneIsShown;
+        this.emailIsShown = emailIsShown;
         this.fname = fname;
         this.lname = lname;
         this.city = city;
-    }
-
-    public User(Role role, String login, String password, String email, String dateOfBirthday, String dateOfRegister, String phone, String fname, String lname) {
-        this.role = role;
-        this.login = login;
-        this.password = password;
-        this.email = email;
-        this.dateOfBirthday = dateOfBirthday;
-        this.dateOfRegister = dateOfRegister;
-        this.phone = phone;
-        this.fname = fname;
-        this.lname = lname;
+        this.postsQt = postsQt;
     }
 
     public int getId() {
@@ -80,12 +75,12 @@ public class User implements Filtration {
         this.id = id;
     }
 
-    public String getLogin() {
-        return login;
+    public Role getRole() {
+        return role;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getPassword() {
@@ -94,14 +89,6 @@ public class User implements Filtration {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getDateOfBirthday() {
@@ -120,12 +107,36 @@ public class User implements Filtration {
         this.dateOfRegister = dateOfRegister;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getPhone() {
         return phone;
     }
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public boolean isPhoneIsShown() {
+        return phoneIsShown;
+    }
+
+    public void setPhoneIsShown(boolean phoneIsShown) {
+        this.phoneIsShown = phoneIsShown;
+    }
+
+    public boolean isEmailIsShown() {
+        return emailIsShown;
+    }
+
+    public void setEmailIsShown(boolean emailIsShown) {
+        this.emailIsShown = emailIsShown;
     }
 
     public String getFname() {
@@ -152,36 +163,12 @@ public class User implements Filtration {
         this.city = city;
     }
 
-
-    public Role getRole() {
-        return role;
+    public int getPostsQt() {
+        return postsQt;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id == user.id &&
-                role == user.role &&
-                Objects.equals(login, user.login) &&
-                Objects.equals(password, user.password) &&
-                Objects.equals(email, user.email) &&
-                Objects.equals(dateOfBirthday, user.dateOfBirthday) &&
-                Objects.equals(dateOfRegister, user.dateOfRegister) &&
-                Objects.equals(phone, user.phone) &&
-                Objects.equals(fname, user.fname) &&
-                Objects.equals(lname, user.lname) &&
-                Objects.equals(city, user.city);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, role, login, password, email, dateOfBirthday, dateOfRegister, phone, fname, lname, city);
+    public void setPostsQt(int postsQt) {
+        this.postsQt = postsQt;
     }
 
     @Override
@@ -193,7 +180,33 @@ public class User implements Filtration {
         s.add("country");
         s.add("dateOfRegister");
         s.add("dateOfBirthday");
+        s.add("postsQt");
         return s;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id &&
+                phoneIsShown == user.phoneIsShown &&
+                emailIsShown == user.emailIsShown &&
+                postsQt == user.postsQt &&
+                role == user.role &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(dateOfBirthday, user.dateOfBirthday) &&
+                Objects.equals(dateOfRegister, user.dateOfRegister) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(phone, user.phone) &&
+                Objects.equals(fname, user.fname) &&
+                Objects.equals(lname, user.lname) &&
+                Objects.equals(city, user.city);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, role, password, dateOfBirthday, dateOfRegister, email, phone, phoneIsShown, emailIsShown, fname, lname, city, postsQt);
     }
 
     @Override

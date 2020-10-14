@@ -64,6 +64,14 @@ public class DeserializerService {
         } else return node.get(field).asInt();
     }
 
+    public static boolean getOldBooleanFieldValue(JsonNode node, String field,boolean value){
+        if(node instanceof NullNode){
+            return value;
+        }else if(node.get(field) == null){
+            return value;
+        } else return node.get(field).asBoolean();
+    }
+
     public static int getIntFieldValue(JsonNode node, String field){
         checkForExplicitlyNullField(node.get(field),"Necessary field \""+field+ "\" can't be null");
         if(node.get(field) == null){
@@ -81,6 +89,7 @@ public class DeserializerService {
             throw new WebException("Necessary field \""+field+ "\" can't be null",400);
         } else return node.get(field).asBoolean();
     }
+
 
     public static void checkForExplicitlyNullField(JsonNode node, String exceptionMessage){
         if (node instanceof NullNode) {

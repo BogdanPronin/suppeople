@@ -9,7 +9,6 @@ import com.j256.ormlite.dao.DaoManager;
 import io.javalin.http.Context;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class UserService {
     static Dao<User, Integer> userDao;
@@ -22,6 +21,8 @@ public class UserService {
             throwables.printStackTrace();
         }
     }
+
+
 
     public static void checkIsUserAdmin(User user){
         if(user.getRole() != Role.ADMIN){
@@ -39,28 +40,18 @@ public class UserService {
             throw new WebException("You aren't admin",400);
         }
     }
-
+    public static void checkIsEmailPhoneNull(String phone,String email){
+        if(phone == null && email == null){
+            throw new WebException("Одно из полей \"Номер телефона\" или \"Email\" должно быть заполнено",400);
+        }
+    }
 
 
     public static void checkIsUserAdmin(Context ctx) throws SQLException {
         checkIsUserAdmin(getUser(ctx.basicAuthCredentials().getUsername()));
     }
 
-    public static void checkIsLoginInUse(String login) throws SQLException {
-        for(User user:userDao.queryForAll()){
-            if(user.getLogin().equals(login)){
-                throw new WebException("This login is already in use",400);
-            }
-        }
-    }
 
-    public static void checkIsLoginInUse(String login,int userId) throws SQLException {
-        for(User user:userDao.queryForAll()){
-            if(user.getLogin().equals(login) && user.getId() != userId){
-                throw new WebException("This login is already in use",400);
-            }
-        }
-    }
     public static void checkValidLogin(String login) {
         for(int i = 0; i < login.length();i++){
             if(login.charAt(i) >= 'A' && login.charAt(i) <= 'Z' || login.charAt(i) >= 'a' && login.charAt(i) <= 'z'){}
@@ -69,7 +60,7 @@ public class UserService {
 
     public static User getUser(String login) throws SQLException {
         for(User user: userDao.queryForAll()){
-            if(user.getLogin().equals(login)){
+            if(user.getPhone().equals(login) || user.getEmail().equals(login)){
                 return user;
             }
         }
@@ -85,4 +76,6 @@ public class UserService {
             throw new WebException("User with such id isn't exist",400);
         }
     }
+
+
 }

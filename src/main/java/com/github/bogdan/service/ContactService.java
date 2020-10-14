@@ -2,6 +2,7 @@ package com.github.bogdan.service;
 
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
+import com.github.bogdan.model.Cities;
 import com.github.bogdan.model.User;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -17,6 +18,15 @@ public class ContactService {
     static {
         try {
             userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    static Dao<Cities, Integer> cityDao;
+    static {
+        try {
+            cityDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Cities.class);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -87,4 +97,9 @@ public class ContactService {
         }
     }
 
+    public static void checkDoesCityExist(int id) throws SQLException {
+        if(cityDao.queryForId(id) == null){
+            throw new WebException("Такого города пока нет в нашей базе",404);
+        }
+    }
 }

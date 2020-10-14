@@ -29,15 +29,15 @@ public class LocalDateService {
         try {
             LocalDate parsedDate = LocalDate.parse(text, formatter);
         }catch (DateTimeParseException e){
-            throw new WebException("Wrong date format, correct date format should be YYYY-MM-DD"+'\n'+e.getMessage(),400);
+            throw new WebException("Неправильный формат времени, дата должна быть записана как: ГГГГ-ММ-ДД",400);
         }
     }
 
     public static void checkAge(String dateOfBirthday){
         LocalDate date = LocalDate.parse(dateOfBirthday,formatter);
         Period period = Period.between(date,LocalDate.now());
-        if(period.getYears() < 18){
-            throw new WebException("This service can be used by persons over the age of 18",403);
+        if(period.getYears() < 14){
+            throw new WebException("Этот сервис могут использовать пользователи, достигшие 14 лет",403);
         }
     }
 

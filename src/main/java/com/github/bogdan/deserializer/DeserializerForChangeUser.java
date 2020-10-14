@@ -21,7 +21,6 @@ import static com.github.bogdan.service.ContactService.checkIsPhoneAlreadyInUse;
 import static com.github.bogdan.service.DeserializerService.*;
 import static com.github.bogdan.service.LocalDateService.checkAge;
 import static com.github.bogdan.service.LocalDateService.checkLocalDateFormat;
-import static com.github.bogdan.service.UserService.checkIsLoginInUse;
 
 public class DeserializerForChangeUser extends StdDeserializer<User> {
     static Logger LOGGER = LoggerFactory.getLogger(DeserializerForChangeUser.class);
@@ -56,10 +55,6 @@ public class DeserializerForChangeUser extends StdDeserializer<User> {
 
             String lname = getOldStringFieldValue(node,"lname",userBase.getLname());
             u.setLname(lname);
-
-            String login = getOldStringFieldValue(node,"login",userBase.getLogin());
-            u.setLogin(login);
-            checkIsLoginInUse(login,id);
 
 
             String email = getOldStringFieldValue(node,"email",userBase.getEmail());
