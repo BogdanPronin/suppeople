@@ -34,13 +34,13 @@ public class ContactService {
 
     public static void checkValidatePhone(String phone) throws NumberParseException {
         if (!doesPhoneAvailable(phone)){
-            throw new WebException("Phone isn't available",400);
+            throw new WebException("Такого номера телефона не существует",400);
         }
     }
 
     public static void checkValidateEmail(String email){
         if(!doesEmailAvailable(email)){
-            throw new WebException("Email isn't available",400);
+            throw new WebException("Такой почты не существет",400);
         }
     }
 
@@ -60,7 +60,7 @@ public class ContactService {
             Phonenumber.PhoneNumber swissNumberProto = phoneUtil.parse(swissNumberStr, null);
             return (phoneUtil.isValidNumber(swissNumberProto));
         }catch (NumberParseException e){
-            throw new WebException("It isn't a phone number",400);
+            throw new WebException("Такого номера телефона не существует",400);
         }
 
     }
@@ -68,7 +68,7 @@ public class ContactService {
     public static void checkIsPhoneAlreadyInUse(String phone) throws SQLException {
         for(User user: userDao.queryForAll()){
             if(user.getPhone().equals(phone)){
-                throw new WebException("This phone already exist",400);
+                throw new WebException("Данный номер уже используется",400);
             }
         }
     }
@@ -76,7 +76,7 @@ public class ContactService {
     public static void checkIsPhoneAlreadyInUse(String phone,int userId) throws SQLException {
         for(User user: userDao.queryForAll()){
             if(user.getPhone().equals(phone) && user.getId() != userId){
-                throw new WebException("This phone already exist",400);
+                throw new WebException("Данный номер уже используется",400);
             }
         }
     }
@@ -84,7 +84,7 @@ public class ContactService {
     public static void checkIsEmailAlreadyInUse(String email) throws SQLException {
         for(User user: userDao.queryForAll()){
             if(user.getEmail().equals(email)){
-                throw new WebException("This email already exist",400);
+                throw new WebException("Данный номер уже используется",400);
             }
         }
     }
@@ -92,7 +92,7 @@ public class ContactService {
     public static void checkIsEmailAlreadyInUse(String email,int userId) throws SQLException {
         for(User user: userDao.queryForAll()){
             if(user.getEmail().equals(email) && user.getId()!=userId){
-                throw new WebException("This email already exist",400);
+                throw new WebException("Данный почтовый адрес уже используется",400);
             }
         }
     }
@@ -101,5 +101,9 @@ public class ContactService {
         if(cityDao.queryForId(id) == null){
             throw new WebException("Такого города пока нет в нашей базе",404);
         }
+    }
+
+    public static Cities getCityById(int id) throws SQLException {
+        return cityDao.queryForId(id);
     }
 }

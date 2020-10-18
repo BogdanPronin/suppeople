@@ -50,6 +50,7 @@ public class MainController {
         objectMapper.registerModule(simpleModule);
         Object obj = objectMapper.readValue(body, clazz);
         dao.create((T) obj);
+
         created(ctx);
     }
 

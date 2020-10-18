@@ -26,7 +26,7 @@ public class UserGetSerializer extends StdSerializer<User> {
         if(user.isEmailIsShown()) {
             jsonGenerator.writeStringField("email", user.getEmail());
         }
-        jsonGenerator.writeStringField("city",user.getCity());
+        jsonGenerator.writeObjectField("city",user.getCity());
         jsonGenerator.writeEndObject();
     }
 }

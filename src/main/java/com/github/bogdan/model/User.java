@@ -43,8 +43,8 @@ public class User implements Filtration {
     @DatabaseField
     private String lname;
 
-    @DatabaseField
-    private String city;
+    @DatabaseField(foreign = true,foreignAutoRefresh = true)
+    private Cities city;
 
     @DatabaseField
     private int postsQt;
@@ -52,7 +52,7 @@ public class User implements Filtration {
     public User() {
     }
 
-    public User(Role role, String password, String dateOfBirthday, String dateOfRegister, String email, String phone, boolean phoneIsShown, boolean emailIsShown, String fname, String lname, String city, int postsQt) {
+    public User(Role role, String password, String dateOfBirthday, String dateOfRegister, String email, String phone, boolean phoneIsShown, boolean emailIsShown, String fname, String lname, Cities city, int postsQt) {
         this.role = role;
         this.password = password;
         this.dateOfBirthday = dateOfBirthday;
@@ -155,11 +155,11 @@ public class User implements Filtration {
         this.lname = lname;
     }
 
-    public String getCity() {
+    public Cities getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(Cities city) {
         this.city = city;
     }
 
@@ -213,4 +213,6 @@ public class User implements Filtration {
     public String toString() {
         return String.valueOf(id);
     }
+
+
 }

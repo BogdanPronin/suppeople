@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.github.bogdan.exception.WebException;
 import com.github.bogdan.model.Role;
 import com.github.bogdan.model.User;
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -40,14 +39,14 @@ public class DeserializerForAddUser extends StdDeserializer<User> {
             u.setLname(lname);
 
             String email = getOldStringFieldValue(node,"email",null);
-            if(!email.equals(null)) {
+            if(email!=null) {
                 u.setEmail(email);
                 checkValidateEmail(email);
                 checkIsEmailAlreadyInUse(email);
             }
 
             String phone = getOldStringFieldValue(node,"phone",null);
-            if(!phone.equals(null)){
+            if(phone!=null){
                 u.setPhone(phone);
                 checkValidatePhone(phone);
                 checkIsPhoneAlreadyInUse(phone);
@@ -77,6 +76,7 @@ public class DeserializerForAddUser extends StdDeserializer<User> {
 
             int city = getIntFieldValue(node,"city");
             checkDoesCityExist(city);
+            u.setCity(getCityById(city));
 
             return u;
 
