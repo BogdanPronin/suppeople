@@ -21,8 +21,14 @@ public class AuthService {
         String password = ctx.basicAuthCredentials().getPassword();
         Dao<User, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
         for(User u:userDao.queryForAll()){
-            if((u.getPhone().equals(login) || u.getEmail().equals(login)) && BCrypt.checkpw(password,u.getPassword())){
-                return true;
+            if(u.getPhone() != null){
+                if(u.getPhone().equals(login)){
+                    return true;
+                }
+            }else if(u.getEmail() != null){
+                if(u.getEmail().equals(login)){
+                    return true;
+                }
             }
         }
         return false;

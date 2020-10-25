@@ -17,9 +17,9 @@ public class PostDealSerializer extends StdSerializer<Post> {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeNumberField("id",post.getId());
         jsonGenerator.writeObjectField("user",post.getUser());
-        jsonGenerator.writeObjectField("areaOfActivity",post.getCategory());
-        jsonGenerator.writeStringField("task",post.getMessage());
-        jsonGenerator.writeStringField("city",post.getCity());
+        jsonGenerator.writeObjectField("category",post.getCategory());
+        jsonGenerator.writeStringField("message",post.getMessage());
+        jsonGenerator.writeObjectField("city",post.getCity());
         jsonGenerator.writeStringField("country",post.getImage());
         jsonGenerator.writeStringField("dateOfCreate",post.getDateOfCreate());
         jsonGenerator.writeEndObject();

@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
+import static com.github.bogdan.service.CityService.checkDoesCityExist;
+import static com.github.bogdan.service.CityService.getCity;
 import static com.github.bogdan.service.ContactService.*;
 import static com.github.bogdan.service.DeserializerService.*;
 import static com.github.bogdan.service.LocalDateService.checkAge;
@@ -76,7 +78,7 @@ public class DeserializerForAddUser extends StdDeserializer<User> {
 
             int city = getIntFieldValue(node,"city");
             checkDoesCityExist(city);
-            u.setCity(getCityById(city));
+            u.setCity(getCity(city));
 
             return u;
 

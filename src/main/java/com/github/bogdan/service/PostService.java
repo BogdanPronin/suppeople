@@ -49,4 +49,6 @@ public class PostService {
     public static Post getPost(int postId) throws SQLException {
         return postDao.queryForId(postId);
     }
+
+
 }

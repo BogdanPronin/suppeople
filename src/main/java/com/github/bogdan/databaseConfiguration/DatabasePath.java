@@ -7,7 +7,7 @@ public class DatabasePath {
     }
 
     public String getSalaPath() {
-        String salaPath="С:\\Users\\MI\\Desktop\\suppeople.db";
+        String salaPath="jdbc:sqlite:С:\\Users\\MI\\Desktop\\suppeople.db";
         return salaPath;
     }
 }

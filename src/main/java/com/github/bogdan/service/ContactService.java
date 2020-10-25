@@ -23,14 +23,7 @@ public class ContactService {
         }
     }
 
-    static Dao<Cities, Integer> cityDao;
-    static {
-        try {
-            cityDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Cities.class);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
+
 
     public static void checkValidatePhone(String phone) throws NumberParseException {
         if (!doesPhoneAvailable(phone)){
@@ -97,13 +90,5 @@ public class ContactService {
         }
     }
 
-    public static void checkDoesCityExist(int id) throws SQLException {
-        if(cityDao.queryForId(id) == null){
-            throw new WebException("Такого города пока нет в нашей базе",404);
-        }
-    }
 
-    public static Cities getCityById(int id) throws SQLException {
-        return cityDao.queryForId(id);
-    }
 }

@@ -11,16 +11,13 @@ import com.github.bogdan.model.User;
 import com.github.bogdan.service.CategoryService;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
-
-import static com.github.bogdan.service.CategoryService.checkDoesSuchCategoryExist;
 import static com.github.bogdan.service.CategoryService.getCategory;
-import static com.github.bogdan.service.DeserializerService.getStringFieldValue;
-import static com.github.bogdan.service.DeserializerService.getIntFieldValue;
-import static com.github.bogdan.service.UserService.getUser;
+import static com.github.bogdan.service.CityService.checkDoesCityExist;
+import static com.github.bogdan.service.CityService.getCity;
+import static com.github.bogdan.service.DeserializerService.*;
 
 public class DeserializerForAddPost extends StdDeserializer<Post> {
     public DeserializerForAddPost(User user) {
@@ -49,13 +46,19 @@ public class DeserializerForAddPost extends StdDeserializer<Post> {
 
             post.setUser(user);
 
-            int areaOfActivity = getIntFieldValue(node,"areaOfActivity");
-            CategoryService.checkDoesSuchCategoryExist(areaOfActivity);
-            post.setCategory(getCategory(areaOfActivity));
+            int category = getIntFieldValue(node,"category");
+            CategoryService.checkDoesSuchCategoryExist(category);
+            post.setCategory(getCategory(category));
 
-            String task = getStringFieldValue(node,"task");
-            post.setMessage(task);
+            String message = getStringFieldValue(node,"message");
+            post.setMessage(message);
 
+            int city = getIntFieldValue(node,"city");
+            checkDoesCityExist(city);
+            post.setCity(getCity(city));
+
+            String image = getOldStringFieldValue(node,"image",null);
+            post.setImage(image);
 
             LocalDate localDate = LocalDate.now();
             post.setDateOfCreate(localDate.toString());

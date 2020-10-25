@@ -16,8 +16,8 @@ public class Post implements Filtration {
     private Category category;
     @DatabaseField
     private String message;
-    @DatabaseField
-    private String city;
+    @DatabaseField(foreign = true,foreignAutoRefresh = true)
+    private Cities city;
     @DatabaseField
     private String image;
     @DatabaseField
@@ -28,7 +28,7 @@ public class Post implements Filtration {
     public Post() {
     }
 
-    public Post(User user, Category category, String message, String city, String image, String dateOfCreate,Status status) {
+    public Post(User user, Category category, String message, Cities city, String image, String dateOfCreate,Status status) {
         this.user = user;
         this.category = category;
         this.message = message;
@@ -71,11 +71,11 @@ public class Post implements Filtration {
     }
 
 
-    public String getCity() {
+    public Cities getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(Cities city) {
         this.city = city;
     }
 

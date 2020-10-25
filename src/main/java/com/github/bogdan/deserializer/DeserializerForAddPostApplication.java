@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import static com.github.bogdan.service.DeserializerService.getIntFieldValue;
 import static com.github.bogdan.service.DeserializerService.getStringFieldValue;
 import static com.github.bogdan.service.PostApplicationService.checkDoesSuchApplicationExist;
+import static com.github.bogdan.service.PostApplicationService.checkItIsNotUserPost;
 import static com.github.bogdan.service.PostService.checkDoesSuchPostExist;
 import static com.github.bogdan.service.PostService.getPost;
 import static com.github.bogdan.service.UserService.getUser;
@@ -47,6 +48,7 @@ public class DeserializerForAddPostApplication extends StdDeserializer<PostAppli
 
             int postId = getIntFieldValue(node,"postId");
             checkDoesSuchPostExist(postId);
+            checkItIsNotUserPost(getUser(userId),postId);
             p.setPost(getPost(postId));
 
             String message = getStringFieldValue(node,"message");

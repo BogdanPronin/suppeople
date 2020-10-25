@@ -60,8 +60,15 @@ public class UserService {
 
     public static User getUser(String login) throws SQLException {
         for(User user: userDao.queryForAll()){
-            if(user.getPhone().equals(login) || user.getEmail().equals(login)){
-                return user;
+            if(user.getPhone()!=null){
+                if(user.getPhone().equals(login)){
+                    return user;
+                }
+            }
+            if(user.getEmail()!=null){
+                if(user.getEmail().equals(login)){
+                    return user;
+                }
             }
         }
         return null;

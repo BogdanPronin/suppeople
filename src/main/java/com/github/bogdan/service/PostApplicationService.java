@@ -2,19 +2,22 @@ package com.github.bogdan.service;
 
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
+import com.github.bogdan.model.Post;
 import com.github.bogdan.model.PostApplication;
+import com.github.bogdan.model.User;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class PostApplicationService {
     static Dao<PostApplication,Integer> postApplicationDao;
+    static Dao<Post,Integer> postDao;
 
     static {
         try {
             postApplicationDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,PostApplication.class);
+            postDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Post.class);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -53,4 +56,11 @@ public class PostApplicationService {
         }
         return postApplications;
     }
+
+    public static void checkItIsNotUserPost(User user, int postId) throws SQLException {
+        if(postDao.queryForId(postId).getUser().equals(user)){
+            throw new WebException("Вы не можете отправлять предложения к своим постам",404);
+        }
+    }
+
 }
