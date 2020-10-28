@@ -37,12 +37,12 @@ public class MainController {
         }
 
         if(clazz == Post.class){
-            simpleModule.addDeserializer(Post.class, new DeserializerForAddPost(getUser(ctx.basicAuthCredentials().getUsername())));
+            simpleModule.addDeserializer(Post.class, new DeserializerForAddPost(getUserById(ctx.basicAuthCredentials().getUsername())));
         }else if(clazz == Category.class){
             checkIsUserAdmin(ctx);
             simpleModule.addDeserializer(Category.class,new DeserializerForCategory());
         }else if(clazz == PostApplication.class){
-            simpleModule.addDeserializer(PostApplication.class, new DeserializerForAddPostApplication(getUser(ctx.basicAuthCredentials().getUsername()).getId()));
+            simpleModule.addDeserializer(PostApplication.class, new DeserializerForAddPostApplication(getUserById(ctx.basicAuthCredentials().getUsername()).getId()));
         }
 
         checkBodyRequestIsEmpty(ctx);
@@ -102,8 +102,8 @@ public class MainController {
 
         checkAuthorization(ctx);
         if (clazz == User.class) {
-            if(getUser(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
-                if(id != getUser(ctx.basicAuthCredentials().getUsername()).getId()){
+            if(getUserById(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+                if(id != getUserById(ctx.basicAuthCredentials().getUsername()).getId()){
                     youAreNotAdmin(ctx);
                 }
             }
@@ -113,11 +113,11 @@ public class MainController {
             simpleModule.addDeserializer(Category.class, new DeserializerForCategory(id));
             CategoryService.checkDoesSuchCategoryExist(id);
         } if(clazz == Post.class){
-            simpleModule.addDeserializer(Post.class,new DeserializerForChangePost(id,getUser(ctx.basicAuthCredentials().getUsername()).getId()));
+            simpleModule.addDeserializer(Post.class,new DeserializerForChangePost(id, getUserById(ctx.basicAuthCredentials().getUsername()).getId()));
         }else if(clazz == PostApplication.class){
             simpleModule.addDeserializer(PostApplication.class,new DeserializerForChangePostApplication(id));
-            if(getUser(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
-                checkIsItUsersApplication(id,getUser(ctx.basicAuthCredentials().getUsername()).getId());
+            if(getUserById(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+                checkIsItUsersApplication(id, getUserById(ctx.basicAuthCredentials().getUsername()).getId());
             }
         }
 
@@ -136,24 +136,24 @@ public class MainController {
         int id = Integer.parseInt(ctx.pathParam("id"));
         checkAuthorization(ctx);
         if (clazz == User.class) {
-            if(getUser(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
-                if(id != getUser(ctx.basicAuthCredentials().getUsername()).getId()){
+            if(getUserById(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+                if(id != getUserById(ctx.basicAuthCredentials().getUsername()).getId()){
                     youAreNotAdmin(ctx);
                 }
             }
             checkDoesSuchUserExist(id);
         }else if(clazz == Post.class){
-            if(getUser(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+            if(getUserById(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
                 if(id != getPostUser(id).getId()){
                     youAreNotAdmin(ctx);
                 }
             }
         }else if(clazz == Category.class){
-            checkIsUserAdmin(getUser(ctx.basicAuthCredentials().getUsername()));
+            checkIsUserAdmin(getUserById(ctx.basicAuthCredentials().getUsername()));
             CategoryService.checkDoesSuchCategoryExist(id);
         }else if(clazz == PostApplication.class){
-            if(getUser(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
-                checkIsItUsersApplication(id,getUser(ctx.basicAuthCredentials().getUsername()).getId());
+            if(getUserById(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+                checkIsItUsersApplication(id, getUserById(ctx.basicAuthCredentials().getUsername()).getId());
             }
             checkDoesSuchApplicationExist(id);
         }

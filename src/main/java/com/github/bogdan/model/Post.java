@@ -127,10 +127,10 @@ public class Post implements Filtration {
     public ArrayList<String> getQueryParams() {
         ArrayList<String> s = new ArrayList<>();
         s.add("city");
-        s.add("areaOfActivity");
         s.add("user");
         s.add("dateOfCreate");
         s.add("status");
+        s.add("category");
         return s;
     }
 

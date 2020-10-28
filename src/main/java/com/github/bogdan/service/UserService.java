@@ -48,7 +48,7 @@ public class UserService {
 
 
     public static void checkIsUserAdmin(Context ctx) throws SQLException {
-        checkIsUserAdmin(getUser(ctx.basicAuthCredentials().getUsername()));
+        checkIsUserAdmin(getUserById(ctx.basicAuthCredentials().getUsername()));
     }
 
 
@@ -58,7 +58,7 @@ public class UserService {
         }
     }
 
-    public static User getUser(String login) throws SQLException {
+    public static User getUserById(String login) throws SQLException {
         for(User user: userDao.queryForAll()){
             if(user.getPhone()!=null){
                 if(user.getPhone().equals(login)){
@@ -74,7 +74,7 @@ public class UserService {
         return null;
     }
 
-    public static User getUser(int id) throws SQLException {
+    public static User getUserById(int id) throws SQLException {
         return userDao.queryForId(id);
     }
 

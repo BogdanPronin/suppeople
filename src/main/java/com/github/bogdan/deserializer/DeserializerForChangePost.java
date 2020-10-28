@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.model.Post;
 import com.github.bogdan.service.CategoryService;
+import com.github.bogdan.service.UserService;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 
@@ -18,7 +19,7 @@ import static com.github.bogdan.service.CategoryService.getCategory;
 import static com.github.bogdan.service.DeserializerService.*;
 import static com.github.bogdan.service.PostService.checkDoesSuchPostExist;
 import static com.github.bogdan.service.PostService.checkPostUser;
-import static com.github.bogdan.service.UserService.getUser;
+import static com.github.bogdan.service.UserService.getUserById;
 
 public class DeserializerForChangePost extends StdDeserializer<Post> {
     public DeserializerForChangePost(int postId, int userId) {
@@ -60,7 +61,7 @@ public class DeserializerForChangePost extends StdDeserializer<Post> {
             checkDoesSuchPostExist(postId);
             checkPostUser(postId,userId);
 
-            p.setUser(getUser(userId));
+            p.setUser(UserService.getUserById(userId));
 
             String task = getOldStringFieldValue(node,"task",postBase.getMessage());
             p.setMessage(task);

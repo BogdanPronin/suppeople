@@ -20,6 +20,7 @@ public class DatabaseConfiguration {
             TableUtils.createTableIfNotExists(connectionSource, PostApplication.class);
             TableUtils.createTableIfNotExists(connectionSource, User.class);
             TableUtils.createTableIfNotExists(connectionSource, Cities.class);
+            TableUtils.createTableIfNotExists(connectionSource, Report.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }

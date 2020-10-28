@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.model.PostApplication;
+import com.github.bogdan.service.UserService;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 
@@ -19,7 +20,7 @@ import static com.github.bogdan.service.PostApplicationService.checkDoesSuchAppl
 import static com.github.bogdan.service.PostApplicationService.checkItIsNotUserPost;
 import static com.github.bogdan.service.PostService.checkDoesSuchPostExist;
 import static com.github.bogdan.service.PostService.getPost;
-import static com.github.bogdan.service.UserService.getUser;
+import static com.github.bogdan.service.UserService.getUserById;
 
 public class DeserializerForAddPostApplication extends StdDeserializer<PostApplication> {
     public DeserializerForAddPostApplication(int userId) {
@@ -44,11 +45,11 @@ public class DeserializerForAddPostApplication extends StdDeserializer<PostAppli
             Dao<PostApplication,Integer> postApplicationDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,PostApplication.class);
             PostApplication p = new PostApplication();
 
-            p.setUser(getUser(userId));
+            p.setUser(UserService.getUserById(userId));
 
             int postId = getIntFieldValue(node,"postId");
             checkDoesSuchPostExist(postId);
-            checkItIsNotUserPost(getUser(userId),postId);
+            checkItIsNotUserPost(UserService.getUserById(userId),postId);
             p.setPost(getPost(postId));
 
             String message = getStringFieldValue(node,"message");
