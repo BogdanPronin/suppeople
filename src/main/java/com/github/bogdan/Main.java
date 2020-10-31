@@ -27,6 +27,9 @@ public class Main {
         Dao<Category,Integer> categoryDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Category.class);
         Dao<Post,Integer> postDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Post.class);
         Dao<PostApplication,Integer> postApplicationDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,PostApplication.class);
+        Dao<Favorites, Integer> favoritesDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Favorites.class);
+        Dao<Report, Integer> reportDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,Report.class);
+        Dao<Cities, Integer> citiesDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,Cities.class);
 
         app.post("/users", ctx -> MainController.add(ctx,userDao,User.class));
         app.get("/users", ctx -> MainController.get(ctx,userDao, User.class));
@@ -48,6 +51,14 @@ public class Main {
         app.get("/postApplication", ctx -> MainController.get(ctx,postApplicationDao,PostApplication.class));
         app.delete("/postApplication", ctx -> MainController.get(ctx,postApplicationDao,PostApplication.class));
 
+        app.post("/favorites", ctx -> MainController.add(ctx,favoritesDao,Favorites.class));
+        //app.patch("/postApplication/:id", ctx -> MainController.change(ctx,postApplicationDao,PostApplication.class));
+        app.get("/favorites", ctx -> MainController.get(ctx,favoritesDao,Favorites.class));
+//        app.delete("/postApplication", ctx -> MainController.get(ctx,postApplicationDao,PostApplication.class));
+
+        app.post("/report", ctx -> MainController.add(ctx,reportDao, Report.class));
+
+        app.get("/cities", ctx -> MainController.get(ctx,citiesDao, Cities.class));
 
         app.exception(IllegalArgumentException.class,(e, ctx) ->{
             WebException w = new WebException("Such enum constant doesn't exist",400);

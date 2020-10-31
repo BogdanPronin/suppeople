@@ -9,8 +9,6 @@ import com.j256.ormlite.dao.DaoManager;
 
 import java.sql.SQLException;
 
-import static com.github.bogdan.service.UserService.getUserById;
-
 public class PostService {
     static Dao<Post,Integer> postDao;
     static Dao<User,Integer> userDao;

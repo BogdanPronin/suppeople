@@ -37,12 +37,16 @@ public class MainController {
         }
 
         if(clazz == Post.class){
-            simpleModule.addDeserializer(Post.class, new DeserializerForAddPost(getUserById(ctx.basicAuthCredentials().getUsername())));
+            simpleModule.addDeserializer(Post.class, new DeserializerForAddPost(getUserByLogin(ctx.basicAuthCredentials().getUsername())));
         }else if(clazz == Category.class){
             checkIsUserAdmin(ctx);
             simpleModule.addDeserializer(Category.class,new DeserializerForCategory());
         }else if(clazz == PostApplication.class){
-            simpleModule.addDeserializer(PostApplication.class, new DeserializerForAddPostApplication(getUserById(ctx.basicAuthCredentials().getUsername()).getId()));
+            simpleModule.addDeserializer(PostApplication.class, new DeserializerForAddPostApplication(getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId()));
+        }else if(clazz == Favorites.class){
+            simpleModule.addDeserializer(Favorites.class, new DeserializerForAddFavorites(getUserByLogin(ctx.basicAuthCredentials().getUsername())));
+        }else if(clazz == Report.class){
+            simpleModule.addDeserializer(Report.class, new DeserializerForAddReport(getUserByLogin(ctx.basicAuthCredentials().getUsername())));
         }
 
         checkBodyRequestIsEmpty(ctx);
@@ -81,6 +85,11 @@ public class MainController {
             PostApplication p = new PostApplication();
             params.addAll(p.getQueryParams());
             simpleModule.addSerializer(PostApplication.class, new PostApplicationSerializer());
+        }else if(clazz == Favorites.class){
+            Favorites f = new Favorites();
+            params.addAll(f.getQueryParams());
+            simpleModule.addSerializer(PostApplication.class, new PostApplicationGetSerializer());
+
         }
 
         String serialized;
@@ -102,8 +111,8 @@ public class MainController {
 
         checkAuthorization(ctx);
         if (clazz == User.class) {
-            if(getUserById(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
-                if(id != getUserById(ctx.basicAuthCredentials().getUsername()).getId()){
+            if(getUserByLogin(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+                if(id != getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId()){
                     youAreNotAdmin(ctx);
                 }
             }
@@ -113,11 +122,11 @@ public class MainController {
             simpleModule.addDeserializer(Category.class, new DeserializerForCategory(id));
             CategoryService.checkDoesSuchCategoryExist(id);
         } if(clazz == Post.class){
-            simpleModule.addDeserializer(Post.class,new DeserializerForChangePost(id, getUserById(ctx.basicAuthCredentials().getUsername()).getId()));
+            simpleModule.addDeserializer(Post.class,new DeserializerForChangePost(id, getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId()));
         }else if(clazz == PostApplication.class){
             simpleModule.addDeserializer(PostApplication.class,new DeserializerForChangePostApplication(id));
-            if(getUserById(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
-                checkIsItUsersApplication(id, getUserById(ctx.basicAuthCredentials().getUsername()).getId());
+            if(getUserByLogin(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+                checkIsItUsersApplication(id, getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId());
             }
         }
 
@@ -136,24 +145,24 @@ public class MainController {
         int id = Integer.parseInt(ctx.pathParam("id"));
         checkAuthorization(ctx);
         if (clazz == User.class) {
-            if(getUserById(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
-                if(id != getUserById(ctx.basicAuthCredentials().getUsername()).getId()){
+            if(getUserByLogin(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+                if(id != getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId()){
                     youAreNotAdmin(ctx);
                 }
             }
             checkDoesSuchUserExist(id);
         }else if(clazz == Post.class){
-            if(getUserById(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+            if(getUserByLogin(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
                 if(id != getPostUser(id).getId()){
                     youAreNotAdmin(ctx);
                 }
             }
         }else if(clazz == Category.class){
-            checkIsUserAdmin(getUserById(ctx.basicAuthCredentials().getUsername()));
+            checkIsUserAdmin(getUserByLogin(ctx.basicAuthCredentials().getUsername()));
             CategoryService.checkDoesSuchCategoryExist(id);
         }else if(clazz == PostApplication.class){
-            if(getUserById(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
-                checkIsItUsersApplication(id, getUserById(ctx.basicAuthCredentials().getUsername()).getId());
+            if(getUserByLogin(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
+                checkIsItUsersApplication(id, getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId());
             }
             checkDoesSuchApplicationExist(id);
         }

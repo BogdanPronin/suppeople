@@ -20,7 +20,6 @@ import static com.github.bogdan.service.PostApplicationService.checkDoesSuchAppl
 import static com.github.bogdan.service.PostApplicationService.checkItIsNotUserPost;
 import static com.github.bogdan.service.PostService.checkDoesSuchPostExist;
 import static com.github.bogdan.service.PostService.getPost;
-import static com.github.bogdan.service.UserService.getUserById;
 
 public class DeserializerForAddPostApplication extends StdDeserializer<PostApplication> {
     public DeserializerForAddPostApplication(int userId) {

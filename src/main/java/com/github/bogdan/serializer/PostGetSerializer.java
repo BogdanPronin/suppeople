@@ -25,7 +25,7 @@ public class PostGetSerializer extends StdSerializer<Post> {
         jsonGenerator.writeObjectField("category",post.getCategory());
         jsonGenerator.writeStringField("message",post.getMessage());
         jsonGenerator.writeObjectField("city",post.getCity());
-        jsonGenerator.writeStringField("country",post.getImage());
+        jsonGenerator.writeStringField("image",post.getImage());
         jsonGenerator.writeStringField("dateOfCreate",post.getDateOfCreate());
         jsonGenerator.writeArrayFieldStart("postApplications");
         try {

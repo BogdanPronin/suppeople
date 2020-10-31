@@ -3,10 +3,11 @@ package com.github.bogdan.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 @DatabaseTable(tableName = "favorites")
-public class Favorites {
+public class Favorites implements Filtration {
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField(foreign = true,foreignAutoRefresh = true)
@@ -64,5 +65,14 @@ public class Favorites {
     @Override
     public String toString() {
         return String.valueOf(id);
+    }
+
+    @Override
+    public ArrayList<String> getQueryParams() {
+        ArrayList<String> s = new ArrayList<>();
+        s.add("id");
+        s.add("post");
+        s.add("user");
+        return s;
     }
 }

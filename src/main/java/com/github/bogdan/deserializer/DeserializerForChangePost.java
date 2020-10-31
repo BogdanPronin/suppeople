@@ -19,7 +19,6 @@ import static com.github.bogdan.service.CategoryService.getCategory;
 import static com.github.bogdan.service.DeserializerService.*;
 import static com.github.bogdan.service.PostService.checkDoesSuchPostExist;
 import static com.github.bogdan.service.PostService.checkPostUser;
-import static com.github.bogdan.service.UserService.getUserById;
 
 public class DeserializerForChangePost extends StdDeserializer<Post> {
     public DeserializerForChangePost(int postId, int userId) {
