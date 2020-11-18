@@ -8,6 +8,7 @@ import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
 import com.github.bogdan.model.*;
 import com.github.bogdan.serializer.WebExceptionSerializer;
+import com.github.bogdan.utilitis.NewThread;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import io.javalin.Javalin;
@@ -17,6 +18,8 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
+        NewThread thread = new NewThread();
+        thread.start();
 
         Javalin app = Javalin
                 .create();

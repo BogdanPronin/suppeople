@@ -3,11 +3,18 @@ package com.github.bogdan.service;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
 import com.github.bogdan.model.Post;
+import com.github.bogdan.model.PostApplication;
 import com.github.bogdan.model.User;
+import com.github.bogdan.utilitis.NewThread;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+
+import static com.github.bogdan.service.PostApplicationService.getPostApplications;
 
 public class PostService {
     static Dao<Post,Integer> postDao;
@@ -46,6 +53,16 @@ public class PostService {
     public static Post getPost(int postId) throws SQLException {
         return postDao.queryForId(postId);
     }
+    static Logger logger = LoggerFactory.getLogger(PostService.class);
 
+    public static void addPostQt(Post p) throws SQLException {
+        ArrayList<PostApplication> postApplications = getPostApplications(p.getId());
+        for(PostApplication a:postApplications){
+            int qt = a.getUser().getPostsQt();
+            a.getUser().setPostsQt(qt+1);
+            userDao.update(a.getUser());
+        }
+
+    }
 
 }

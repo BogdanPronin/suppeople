@@ -16,14 +16,17 @@ public class PostApplication implements Filtration{
     private Post post;
     @DatabaseField
     private String message;
+    @DatabaseField
+    private ApplicationStatus status;
 
     public PostApplication() {
     }
 
-    public PostApplication(User user, Post post, String message) {
+    public PostApplication(User user, Post post, String message, ApplicationStatus status) {
         this.user = user;
         this.post = post;
         this.message = message;
+        this.status = status;
     }
 
     public int getId() {
@@ -58,6 +61,14 @@ public class PostApplication implements Filtration{
         this.message = message;
     }
 
+    public ApplicationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ApplicationStatus status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -66,12 +77,13 @@ public class PostApplication implements Filtration{
         return id == that.id &&
                 Objects.equals(user, that.user) &&
                 Objects.equals(post, that.post) &&
-                Objects.equals(message, that.message);
+                Objects.equals(message, that.message) &&
+                status == that.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, post, message);
+        return Objects.hash(id, user, post, message, status);
     }
 
     @Override

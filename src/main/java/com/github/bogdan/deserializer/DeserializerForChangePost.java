@@ -17,6 +17,7 @@ import java.sql.SQLException;
 
 import static com.github.bogdan.service.CategoryService.getCategory;
 import static com.github.bogdan.service.DeserializerService.*;
+import static com.github.bogdan.service.PostApplicationService.getPostApplications;
 import static com.github.bogdan.service.PostService.checkDoesSuchPostExist;
 import static com.github.bogdan.service.PostService.checkPostUser;
 
@@ -57,21 +58,12 @@ public class DeserializerForChangePost extends StdDeserializer<Post> {
             p.setId(postId);
 
             Post postBase = postDao.queryForId(postId);
+
             checkDoesSuchPostExist(postId);
+
             checkPostUser(postId,userId);
 
-            p.setUser(UserService.getUserById(userId));
-
-            String task = getOldStringFieldValue(node,"task",postBase.getMessage());
-            p.setMessage(task);
-
-            if(checkNullFieldValue(node,"areaOfActivity")){
-                p.setCategory(postBase.getCategory());
-            }else {
-                CategoryService.checkDoesSuchCategoryExist(node.get("areaOfActivity").asInt());
-                p.setCategory(getCategory(node.get("areaOfActivity").asInt()));
-            }
-
+            p.setUser(postBase.getUser());
 
 
             p.setDateOfCreate(postBase.getDateOfCreate());

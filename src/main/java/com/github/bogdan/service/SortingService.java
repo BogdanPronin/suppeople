@@ -31,6 +31,7 @@ public class SortingService {
         }
         return objects;
     }
+
     private static List<String> getProperties(Method[] methods) {
         List<String> methodNames = new ArrayList<>();
         for (Method method : methods) {

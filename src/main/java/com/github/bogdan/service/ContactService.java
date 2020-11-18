@@ -60,25 +60,32 @@ public class ContactService {
 
     public static void checkIsPhoneAlreadyInUse(String phone) throws SQLException {
         for(User user: userDao.queryForAll()){
-            if(user.getPhone().equals(phone)){
-                throw new WebException("Данный номер уже используется",400);
+            if(user.getPhone()!= null) {
+                if (user.getPhone().equals(phone)) {
+                    throw new WebException("Данный номер уже используется", 400);
+                }
             }
         }
     }
 
     public static void checkIsPhoneAlreadyInUse(String phone,int userId) throws SQLException {
         for(User user: userDao.queryForAll()){
-            if(user.getPhone().equals(phone) && user.getId() != userId){
-                throw new WebException("Данный номер уже используется",400);
+            if(user.getPhone()!= null){
+                if(user.getPhone().equals(phone) && user.getId() != userId){
+                    throw new WebException("Данный номер уже используется",400);
+                }
             }
         }
     }
 
     public static void checkIsEmailAlreadyInUse(String email) throws SQLException {
         for(User user: userDao.queryForAll()){
-            if(user.getEmail().equals(email)){
-                throw new WebException("Данный номер уже используется",400);
+            if(user.getEmail()!= null){
+                if(user.getEmail().equals(email)){
+                    throw new WebException("Данный email уже используется",400);
+                }
             }
+
         }
     }
 

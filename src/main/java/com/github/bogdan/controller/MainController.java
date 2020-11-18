@@ -59,8 +59,7 @@ public class MainController {
     }
 
     public static <T> void get(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException, NoSuchFieldException, IllegalAccessException {
-        checkDoesBasicAuthEmpty(ctx);
-        checkAuthorization(ctx);
+
 
         ctx.header("content-type:app/json");
         SimpleModule simpleModule = new SimpleModule();
@@ -86,10 +85,11 @@ public class MainController {
             params.addAll(p.getQueryParams());
             simpleModule.addSerializer(PostApplication.class, new PostApplicationSerializer());
         }else if(clazz == Favorites.class){
+            checkDoesBasicAuthEmpty(ctx);
+            checkAuthorization(ctx);
             Favorites f = new Favorites();
             params.addAll(f.getQueryParams());
             simpleModule.addSerializer(PostApplication.class, new PostApplicationGetSerializer());
-
         }
 
         String serialized;
@@ -124,7 +124,7 @@ public class MainController {
         } if(clazz == Post.class){
             simpleModule.addDeserializer(Post.class,new DeserializerForChangePost(id, getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId()));
         }else if(clazz == PostApplication.class){
-            simpleModule.addDeserializer(PostApplication.class,new DeserializerForChangePostApplication(id));
+            simpleModule.addDeserializer(PostApplication.class,new DeserializerForChangePostApplication(id,getUserByLogin(ctx.basicAuthCredentials().getUsername())));
             if(getUserByLogin(ctx.basicAuthCredentials().getUsername()).getRole()!= Role.ADMIN){
                 checkIsItUsersApplication(id, getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId());
             }
