@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class PaginationService {
-    public static int defaultPagesSize = 2;
+    public static int defaultPagesSize = 3;
     public static int defaultPage = 1;
     public static <T> ArrayList<T> getPagination(Dao<T,Integer> dao, int page, int size) throws SQLException {
         ArrayList<T> list;
@@ -18,5 +18,9 @@ public class PaginationService {
         queryBuilder.offset(startRow).limit(maxRows);
         list = (ArrayList<T>) dao.query(queryBuilder.prepare());
         return list;
+    }
+    public static <T> int getPages(Dao<T,Integer> dao, int size) throws SQLException {
+        float a = dao.queryForAll().size()/size;
+        return (int) Math.ceil(a);
     }
 }

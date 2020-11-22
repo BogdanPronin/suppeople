@@ -2,7 +2,6 @@ package com.github.bogdan.service;
 
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
-import com.github.bogdan.model.Cities;
 import com.github.bogdan.model.User;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;

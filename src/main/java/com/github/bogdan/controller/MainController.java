@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import static com.github.bogdan.service.AuthService.checkAuthorization;
 import static com.github.bogdan.service.CtxService.*;
+import static com.github.bogdan.service.PaginationService.getPages;
 import static com.github.bogdan.service.PaginationService.getPagination;
 import static com.github.bogdan.service.PostApplicationService.checkDoesSuchApplicationExist;
 import static com.github.bogdan.service.PostApplicationService.checkIsItUsersApplication;
@@ -61,7 +62,7 @@ public class MainController {
     public static <T> void get(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException, NoSuchFieldException, IllegalAccessException {
 
 
-        ctx.header("content-type:app/json");
+
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -72,6 +73,8 @@ public class MainController {
         objectMapper.registerModule(simpleModule);
         int page = getPage(ctx);
         int size = getPagesSize(ctx);
+        ctx.header("total-pages", String.valueOf(getPages(dao,size)));
+
         ArrayList<String> params = new ArrayList<>();
         if(clazz == User.class){
             User u = new User();

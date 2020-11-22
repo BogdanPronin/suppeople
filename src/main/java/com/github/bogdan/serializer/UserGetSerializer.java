@@ -27,6 +27,7 @@ public class UserGetSerializer extends StdSerializer<User> {
             jsonGenerator.writeStringField("email", user.getEmail());
         }
         jsonGenerator.writeObjectField("city",user.getCity());
+        jsonGenerator.writeNumberField("postQt",user.getPostsQt());
         jsonGenerator.writeEndObject();
     }
 }

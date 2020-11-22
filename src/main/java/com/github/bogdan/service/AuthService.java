@@ -23,10 +23,17 @@ public class AuthService {
         for(User u:userDao.queryForAll()){
             if(u.getPhone() != null){
                 if(u.getPhone().equals(login)){
+                    if(!BCrypt.checkpw(password,u.getPassword())){
+                        return false;
+                    }
                     return true;
                 }
-            }else if(u.getEmail() != null){
+            }
+            if(u.getEmail() != null){
                 if(u.getEmail().equals(login)){
+                    if(!BCrypt.checkpw(password,u.getPassword())){
+                        return false;
+                    }
                     return true;
                 }
             }
