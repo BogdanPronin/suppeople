@@ -69,8 +69,10 @@ public class MainController {
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
         int userId = 0;
-        if(getUserByLogin(ctx.basicAuthCredentials().getUsername()) != null){
-            userId = getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId();
+        if(ctx.basicAuthCredentialsExist()){
+            if(getUserByLogin(ctx.basicAuthCredentials().getUsername())!=null) {
+                userId = getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId();
+            }
         }
         simpleModule.addSerializer(User.class, new UserGetSerializer(userId));
         simpleModule.addSerializer(Post.class, new PostGetSerializer());
@@ -112,8 +114,10 @@ public class MainController {
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
         int userId = 0;
-        if(getUserByLogin(ctx.basicAuthCredentials().getUsername()) != null){
-            userId = getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId();
+        if(ctx.basicAuthCredentialsExist()){
+            if(getUserByLogin(ctx.basicAuthCredentials().getUsername())!=null) {
+                userId = getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId();
+            }
         }
         simpleModule.addSerializer(User.class, new UserGetSerializer(userId));
         simpleModule.addSerializer(Post.class, new PostGetSerializer());
