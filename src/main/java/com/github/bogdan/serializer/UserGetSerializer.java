@@ -8,8 +8,10 @@ import com.github.bogdan.model.User;
 import java.io.IOException;
 
 public class UserGetSerializer extends StdSerializer<User> {
-    public UserGetSerializer() {
+    private int id;
+    public UserGetSerializer(int id) {
         super(User.class);
+        this.id = id;
     }
 
     @Override
@@ -20,12 +22,13 @@ public class UserGetSerializer extends StdSerializer<User> {
         jsonGenerator.writeStringField("lname",user.getLname());
         jsonGenerator.writeStringField("dateOfBirthday",user.getDateOfBirthday());
         jsonGenerator.writeStringField("dateOfRegister",user.getDateOfRegister());
-        if(user.isPhoneIsShown()){
+        if(user.isPhoneIsShown() || id==user.getId()){
             jsonGenerator.writeStringField("phone",user.getPhone());
         }
-        if(user.isEmailIsShown()) {
+        if(user.isEmailIsShown() || id==user.getId()) {
             jsonGenerator.writeStringField("email", user.getEmail());
         }
+
         jsonGenerator.writeObjectField("city",user.getCity());
         jsonGenerator.writeNumberField("postQt",user.getPostsQt());
         jsonGenerator.writeEndObject();

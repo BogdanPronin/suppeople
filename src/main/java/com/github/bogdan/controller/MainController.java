@@ -3,6 +3,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.bogdan.deserializer.*;
+import com.github.bogdan.exception.WebException;
 import com.github.bogdan.model.*;
 import com.github.bogdan.serializer.*;
 import com.github.bogdan.service.CategoryService;
@@ -67,8 +68,11 @@ public class MainController {
 
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
-
-        simpleModule.addSerializer(User.class, new UserGetSerializer());
+        int userId = 0;
+        if(getUserByLogin(ctx.basicAuthCredentials().getUsername()) != null){
+            userId = getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId();
+        }
+        simpleModule.addSerializer(User.class, new UserGetSerializer(userId));
         simpleModule.addSerializer(Post.class, new PostGetSerializer());
         simpleModule.addSerializer(Category.class, new CategoryGetSerializer());
 
@@ -103,6 +107,27 @@ public class MainController {
         ctx.header("total-pages", String.valueOf(getPages(dao,getByQueryParams(dao,clazz,params,ctx),size)));
 
         ctx.result(serialized);
+    }
+    public static <T> void getById(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws SQLException, JsonProcessingException {
+        SimpleModule simpleModule = new SimpleModule();
+        ObjectMapper objectMapper = new ObjectMapper();
+        int userId = 0;
+        if(getUserByLogin(ctx.basicAuthCredentials().getUsername()) != null){
+            userId = getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId();
+        }
+        simpleModule.addSerializer(User.class, new UserGetSerializer(userId));
+        simpleModule.addSerializer(Post.class, new PostGetSerializer());
+        simpleModule.addSerializer(Category.class, new CategoryGetSerializer());
+
+        objectMapper.registerModule(simpleModule);
+        int id = Integer.parseInt(ctx.pathParam("id"));
+        if(dao.queryForId(id) == null){
+            throw new WebException("Такого не существует",404);
+        }
+        String serialized = objectMapper.writeValueAsString(dao.queryForId(id));
+
+        ctx.result(serialized);
+
     }
 
     public static <T> void change(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {

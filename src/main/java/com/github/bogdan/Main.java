@@ -37,6 +37,7 @@ public class Main {
 
         app.post("/users", ctx -> MainController.add(ctx,userDao,User.class));
         app.get("/users", ctx -> MainController.get(ctx,userDao, User.class));
+        app.get("/users/:id", ctx -> MainController.getById(ctx,userDao, User.class));
         app.patch("/users/:id", ctx -> MainController.change(ctx,userDao,User.class));
         app.delete("/users/:id",ctx -> MainController.delete(ctx,userDao,User.class));
 
