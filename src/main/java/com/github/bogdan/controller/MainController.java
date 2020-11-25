@@ -10,6 +10,8 @@ import com.j256.ormlite.dao.Dao;
 import io.javalin.http.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import static com.github.bogdan.service.AuthService.checkAuthorization;
@@ -19,7 +21,7 @@ import static com.github.bogdan.service.PaginationService.getPagination;
 import static com.github.bogdan.service.PostApplicationService.checkDoesSuchApplicationExist;
 import static com.github.bogdan.service.PostApplicationService.checkIsItUsersApplication;
 import static com.github.bogdan.service.PostService.getPostUser;
-import static com.github.bogdan.service.SortingService.sortByQueryParams;
+import static com.github.bogdan.service.SortingService.getByQueryParams;
 import static com.github.bogdan.service.UserService.*;
 
 public class MainController {
@@ -59,7 +61,7 @@ public class MainController {
         created(ctx);
     }
 
-    public static <T> void get(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException, NoSuchFieldException, IllegalAccessException {
+    public static <T> void get(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException, NoSuchFieldException, IllegalAccessException, UnsupportedEncodingException {
 
 
 
@@ -73,7 +75,6 @@ public class MainController {
         objectMapper.registerModule(simpleModule);
         int page = getPage(ctx);
         int size = getPagesSize(ctx);
-        ctx.header("total-pages", String.valueOf(getPages(dao,size)));
 
         ArrayList<String> params = new ArrayList<>();
         if(clazz == User.class){
@@ -98,7 +99,9 @@ public class MainController {
         String serialized;
         if(doesQueryParamsEmpty(ctx,params)){
             serialized = objectMapper.writeValueAsString(getPagination(dao,page,size));
-        }else serialized = objectMapper.writeValueAsString(sortByQueryParams(dao,clazz,params,ctx));
+        }else serialized = objectMapper.writeValueAsString(getByQueryParams(dao,clazz,params,ctx));
+        ctx.header("total-pages", String.valueOf(getPages(dao,getByQueryParams(dao,clazz,params,ctx),size)));
+
         ctx.result(serialized);
     }
 

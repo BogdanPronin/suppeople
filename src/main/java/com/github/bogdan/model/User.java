@@ -177,10 +177,10 @@ public class User implements Filtration {
         s.add("fname");
         s.add("lname");
         s.add("city");
-        s.add("country");
         s.add("dateOfRegister");
         s.add("dateOfBirthday");
         s.add("postsQt");
+        s.add("email");
         return s;
     }
 
