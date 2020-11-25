@@ -21,10 +21,11 @@ public class Main {
         NewThread thread = new NewThread();
         thread.start();
 
-        Javalin app = Javalin
-                .create();
-        app.config = new JavalinConfig().enableDevLogging();
-        app.start(22867);
+        Javalin app = Javalin.create(javalinConfig -> {
+            javalinConfig.enableDevLogging();
+            javalinConfig.enableCorsForAllOrigins();
+            javalinConfig.defaultContentType = "application/json";
+        }).start(22867);
 
         Dao<User, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
         Dao<Category,Integer> categoryDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Category.class);

@@ -181,6 +181,7 @@ public class User implements Filtration {
         s.add("dateOfBirthday");
         s.add("postsQt");
         s.add("email");
+        s.add("id");
         return s;
     }
 
