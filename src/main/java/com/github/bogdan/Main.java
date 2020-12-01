@@ -65,7 +65,7 @@ public class Main {
 
         app.get("/cities", ctx -> MainController.get(ctx,citiesDao, Cities.class));
 
-        app.get("/autorized",ctx -> MainController.getAuthorized(ctx));
+        app.get("/authorized",ctx -> MainController.getAuthorized(ctx));
         app.exception(IllegalArgumentException.class,(e, ctx) ->{
             WebException w = new WebException("Such enum constant doesn't exist",400);
             SimpleModule simpleModule = new SimpleModule();
