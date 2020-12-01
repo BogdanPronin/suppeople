@@ -137,6 +137,7 @@ public class MainController {
     public static void getAuthorized(Context ctx) throws JsonProcessingException, SQLException {
         checkDoesBasicAuthEmpty(ctx);
         checkAuthorization(ctx);
+        throw new WebException("Authorized",200);
     }
     public static <T> void change(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
         checkDoesBasicAuthEmpty(ctx);
