@@ -110,6 +110,7 @@ public class MainController {
 
         ctx.result(serialized);
     }
+
     public static <T> void getById(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws SQLException, JsonProcessingException {
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -133,7 +134,10 @@ public class MainController {
         ctx.result(serialized);
 
     }
-
+    public static void getAuthorized(Context ctx) throws JsonProcessingException, SQLException {
+        checkDoesBasicAuthEmpty(ctx);
+        checkAuthorization(ctx);
+    }
     public static <T> void change(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
         checkDoesBasicAuthEmpty(ctx);
 
