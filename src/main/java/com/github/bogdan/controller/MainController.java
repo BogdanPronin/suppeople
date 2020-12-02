@@ -58,8 +58,9 @@ public class MainController {
         objectMapper.registerModule(simpleModule);
         Object obj = objectMapper.readValue(body, clazz);
         dao.create((T) obj);
-
-        created(ctx);
+        if(clazz != User.class) {
+            created(ctx);
+        }else ctx.result(objectMapper.writeValueAsString(obj));
     }
 
     public static <T> void get(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException, NoSuchFieldException, IllegalAccessException, UnsupportedEncodingException {
@@ -135,10 +136,12 @@ public class MainController {
 
     }
     public static void getAuthorized(Context ctx) throws JsonProcessingException, SQLException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
         checkDoesBasicAuthEmpty(ctx);
         checkAuthorization(ctx);
-        throw new WebException("Authorized",200);
-    }
+        ctx.result(objectMapper.writeValueAsString(getUserByLogin(ctx.basicAuthCredentials().getUsername())));
+     }
     public static <T> void change(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
         checkDoesBasicAuthEmpty(ctx);
 
