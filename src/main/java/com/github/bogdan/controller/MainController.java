@@ -60,7 +60,10 @@ public class MainController {
         dao.create((T) obj);
         if(clazz != User.class) {
             created(ctx);
-        }else ctx.result(objectMapper.writeValueAsString(obj));
+        }else{
+            simpleModule.addSerializer(User.class, new UserGetSerializer(((User) obj).getId()));
+            ctx.result(objectMapper.writeValueAsString(obj));
+        }
     }
 
     public static <T> void get(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException, NoSuchFieldException, IllegalAccessException, UnsupportedEncodingException {
@@ -140,6 +143,10 @@ public class MainController {
 
         checkDoesBasicAuthEmpty(ctx);
         checkAuthorization(ctx);
+        SimpleModule simpleModule = new SimpleModule();
+
+        simpleModule.addSerializer(User.class, new UserGetSerializer(getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId()));
+
         ctx.result(objectMapper.writeValueAsString(getUserByLogin(ctx.basicAuthCredentials().getUsername())));
      }
     public static <T> void change(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
