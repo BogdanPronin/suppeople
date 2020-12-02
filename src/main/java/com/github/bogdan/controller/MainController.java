@@ -146,13 +146,14 @@ public class MainController {
         SimpleModule simpleModule = new SimpleModule();
 
         simpleModule.addSerializer(User.class, new UserGetSerializer(getUserByLogin(ctx.basicAuthCredentials().getUsername()).getId()));
+        objectMapper.registerModule(simpleModule);
 
         ctx.result(objectMapper.writeValueAsString(getUserByLogin(ctx.basicAuthCredentials().getUsername())));
      }
     public static <T> void change(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
         checkDoesBasicAuthEmpty(ctx);
 
-        ctx.header("content-type:app/json");
+        ctx.header("content-type","app/json");
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
         int id = Integer.parseInt(ctx.pathParam("id"));
