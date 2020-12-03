@@ -27,7 +27,10 @@ public class PostGetSerializer extends StdSerializer<Post> {
         jsonGenerator.writeObjectField("city",post.getCity());
         jsonGenerator.writeStringField("image",post.getImage());
         jsonGenerator.writeStringField("dateOfCreate",post.getDateOfCreate());
-        jsonGenerator.writeStringField("status",post.getStatus().toString());
+        if(post.getStatus()!=null) {
+            jsonGenerator.writeStringField("status", post.getStatus().toString());
+        }else jsonGenerator.writeStringField("status",null);
+
         jsonGenerator.writeArrayFieldStart("postApplications");
         try {
             for(PostApplication p: getPostApplications(post.getId())){

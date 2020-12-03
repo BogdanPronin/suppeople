@@ -2,9 +2,7 @@ package com.github.bogdan.service;
 
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
-import com.github.bogdan.model.Post;
-import com.github.bogdan.model.PostApplication;
-import com.github.bogdan.model.User;
+import com.github.bogdan.model.*;
 import com.github.bogdan.utilitis.NewThread;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -59,8 +57,10 @@ public class PostService {
         ArrayList<PostApplication> postApplications = getPostApplications(p.getId());
         for(PostApplication a:postApplications){
             int qt = a.getUser().getPostsQt();
-            a.getUser().setPostsQt(qt+1);
-            userDao.update(a.getUser());
+            if(a.getStatus()== ApplicationStatus.ACCEPTED) {
+                a.getUser().setPostsQt(qt + 1);
+                userDao.update(a.getUser());
+            }
         }
 
     }
