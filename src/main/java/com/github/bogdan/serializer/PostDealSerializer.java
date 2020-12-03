@@ -22,6 +22,7 @@ public class PostDealSerializer extends StdSerializer<Post> {
         jsonGenerator.writeObjectField("city",post.getCity());
         jsonGenerator.writeStringField("country",post.getImage());
         jsonGenerator.writeStringField("dateOfCreate",post.getDateOfCreate());
+        jsonGenerator.writeStringField("status",post.getStatus().toString());
         jsonGenerator.writeEndObject();
     }
 }
