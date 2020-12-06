@@ -18,6 +18,15 @@ public class PaginationService {
         list = (ArrayList<T>) dao.query(queryBuilder.prepare());
         return list;
     }
+    public static <T> ArrayList<T> getPagination(ArrayList<T> dao, int page, int size) throws SQLException {
+        ArrayList<T> list = new ArrayList<>();
+        int startRow = (page-1)*size;
+        long maxRows = startRow+size;
+        for(;startRow < maxRows; startRow++){
+            list.add(dao.get(startRow));
+        }
+        return list;
+    }
     public static <T> int getPages(Dao<T,Integer>  dao,ArrayList<T> list, int size) throws SQLException {
         float a;
         if(!list.isEmpty()){

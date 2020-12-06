@@ -67,9 +67,6 @@ public class MainController {
     }
 
     public static <T> void get(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException, NoSuchFieldException, IllegalAccessException, UnsupportedEncodingException {
-
-
-
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
         int userId = 0;
@@ -109,7 +106,7 @@ public class MainController {
         String serialized;
         if(doesQueryParamsEmpty(ctx,params)){
             serialized = objectMapper.writeValueAsString(getPagination(dao,page,size));
-        }else serialized = objectMapper.writeValueAsString(getByQueryParams(dao,clazz,params,ctx));
+        }else serialized = objectMapper.writeValueAsString(getPagination(getByQueryParams(dao,clazz,params,ctx),page,size));
         ctx.header("total-pages", String.valueOf(getPages(dao,getByQueryParams(dao,clazz,params,ctx),size)));
 
         ctx.result(serialized);
