@@ -8,6 +8,8 @@ import com.github.bogdan.model.*;
 import com.github.bogdan.serializer.*;
 import com.github.bogdan.service.CategoryService;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 import io.javalin.http.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,10 @@ import org.slf4j.LoggerFactory;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.github.bogdan.service.AuthService.checkAuthorization;
 import static com.github.bogdan.service.CtxService.*;
 import static com.github.bogdan.service.PaginationService.getPages;
@@ -183,6 +189,32 @@ public class MainController {
 
         dao.update((T) obj);
         updated(ctx);
+    }
+
+    public static void search(Context ctx, Dao<User,Integer> userDao) throws SQLException, JsonProcessingException {
+        SimpleModule simpleModule = new SimpleModule();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String searchString = ctx.queryParam("searchString");
+
+        String[] search = searchString.split(" ");
+        QueryBuilder<User, Integer> qb = userDao.queryBuilder();
+        QueryBuilder<User, Integer> qb2 = userDao.queryBuilder();
+        if(search.length == 1){
+            qb.where().like("fname",search[0]+"%").or().like("lname",search[0]+"%");
+        }else if(search.length!=0){
+            qb.where().like("fname", search[0] + "%").and().like("lname", search[1] + "%");
+            qb2.where().like("fname", search[1] + "%").and().like("lname", search[0] + "%");
+        }
+        PreparedQuery<User> pq = qb.prepare();
+        PreparedQuery<User> pq2 = qb.prepare();
+
+        Set<User> set =new HashSet<>();
+        set.addAll(userDao.query(pq));
+        set.addAll(userDao.query(pq2));
+
+        simpleModule.addSerializer(User.class, new UserGetSerializer(0));
+        ctx.result(objectMapper.writeValueAsString(userDao.query(pq)));
+
     }
 
     public static <T> void delete(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
