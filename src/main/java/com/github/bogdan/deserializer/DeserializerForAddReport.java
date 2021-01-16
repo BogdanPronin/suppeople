@@ -52,6 +52,8 @@ public class DeserializerForAddReport extends StdDeserializer<Report> {
             if(getUser().getId() == user){
                 throw new WebException("Вы не можете пожаловаться на самого себя",400);
             }
+            int category = getIntFieldValue(node,"reportMessageCategory");
+
             report.setReportedUser(UserService.getUserById(user));
 
             return report;

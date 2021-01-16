@@ -1,7 +1,10 @@
 package com.github.bogdan.service;
 
+import com.github.bogdan.controller.MainController;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,12 +21,17 @@ public class PaginationService {
         list = (ArrayList<T>) dao.query(queryBuilder.prepare());
         return list;
     }
-    public static <T> ArrayList<T> getPagination(ArrayList<T> dao, int page, int size) throws SQLException {
+    static Logger LOGGER = LoggerFactory.getLogger(PaginationService.class);
+
+    public static <T> ArrayList<T> getPagination(ArrayList<T> dao, int page, int size) {
         ArrayList<T> list = new ArrayList<>();
         int startRow = (page-1)*size;
         long maxRows = startRow+size;
         for(;startRow < maxRows; startRow++){
-            list.add(dao.get(startRow));
+            LOGGER.info("startRow: "+startRow+" list.size() "+list.size());
+            if(dao.size()>startRow){
+                list.add(dao.get(startRow));
+            }
         }
         return list;
     }

@@ -16,16 +16,19 @@ public class Report implements Filtration {
     private User reportedUser;
     @DatabaseField
     private String message;
+    @DatabaseField(foreign = true,foreignAutoRefresh = true)
+    private ReportMessageCategory reportMessageCategory;
     @DatabaseField
     private String image;
 
     public Report() {
     }
 
-    public Report(User user, User reportedUser, String message, String image) {
+    public Report(User user, User reportedUser, String message, ReportMessageCategory reportMessageCategory, String image) {
         this.user = user;
         this.reportedUser = reportedUser;
         this.message = message;
+        this.reportMessageCategory = reportMessageCategory;
         this.image = image;
     }
 
@@ -59,6 +62,14 @@ public class Report implements Filtration {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public ReportMessageCategory getReportMessageCategory() {
+        return reportMessageCategory;
+    }
+
+    public void setReportMessageCategory(ReportMessageCategory reportMessageCategory) {
+        this.reportMessageCategory = reportMessageCategory;
     }
 
     public String getImage() {

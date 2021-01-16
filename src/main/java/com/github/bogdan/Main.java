@@ -8,11 +8,11 @@ import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
 import com.github.bogdan.model.*;
 import com.github.bogdan.serializer.WebExceptionSerializer;
+import com.github.bogdan.service.SortingService;
 import com.github.bogdan.utilitis.NewThread;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import io.javalin.Javalin;
-import io.javalin.core.JavalinConfig;
 
 import java.sql.SQLException;
 
@@ -50,6 +50,7 @@ public class Main {
         app.get("/post", ctx -> MainController.get(ctx,postDao,Post.class));
         app.patch("/post/:id", ctx -> MainController.change(ctx,postDao,Post.class));
         app.delete("/post/:id", ctx -> MainController.delete(ctx,postDao,Post.class));
+        //app.get("/postSort",ctx -> SortingService.sort(postDao,ctx));
 
         app.post("/postApplication", ctx -> MainController.add(ctx,postApplicationDao,PostApplication.class));
         app.patch("/postApplication/:id", ctx -> MainController.change(ctx,postApplicationDao,PostApplication.class));
@@ -70,7 +71,7 @@ public class Main {
         app.get("/search",ctx -> MainController.search(ctx,userDao));
 
         app.exception(IllegalArgumentException.class,(e, ctx) ->{
-            WebException w = new WebException("Such enum constant doesn't exist",400);
+            WebException w = new WebException("Such enum constant doesn't exist: "+e.getMessage(),400);
             SimpleModule simpleModule = new SimpleModule();
             simpleModule.addSerializer(WebException.class,new WebExceptionSerializer());
             ObjectMapper objectMapper = new ObjectMapper();

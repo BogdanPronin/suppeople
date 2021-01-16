@@ -33,18 +33,19 @@ public class NewThread extends Thread{
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             String currentTime = LocalDate.now().format(formatter);
+            while (true) {
+                for (Post p : postDao.queryForAll()) {
+                    LocalDate l = LocalDate.parse(p.getDateOfCreate(), formatter);
+                    if (p.getStatus() == Status.PROCESSING) {
 
-            for(Post p:postDao.queryForAll()){
-                LocalDate l = LocalDate.parse(p.getDateOfCreate(), formatter);
-                if(p.getStatus()== Status.PROCESSING){
-
-                    if(ChronoUnit.DAYS.between(l, LocalDate.now()) >= 15 && !getPostApplications(p.getId()).isEmpty()){
-                        p.setStatus(Status.COMPLETED);
-                        addPostQt(p);
+                        if (ChronoUnit.DAYS.between(l, LocalDate.now()) >= 15 && !getPostApplications(p.getId()).isEmpty()) {
+                            p.setStatus(Status.COMPLETED);
+                            addPostQt(p);
+                        }
                     }
-                }
-                postDao.update(p);
+                    postDao.update(p);
 
+                }
             }
 
         } catch (SQLException throwables) {

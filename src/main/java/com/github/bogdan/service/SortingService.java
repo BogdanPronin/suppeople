@@ -1,5 +1,7 @@
 package com.github.bogdan.service;
 
+import com.github.bogdan.comparators.PostCategoryComparator;
+import com.github.bogdan.model.Post;
 import com.j256.ormlite.dao.Dao;
 import io.javalin.http.Context;
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class SortingService {
@@ -41,12 +44,29 @@ public class SortingService {
                         valueString = value.toString();
                     }
                     if(URLDecoder.decode(currentParam, StandardCharsets.UTF_8.toString()).equals(valueString)){
+                        LOGGER.info("Obj:"+obj);
                         objects.add(obj);
                     }
                 }
                 field.setAccessible(false);
             }
         }
+        if(tClass == Post.class){
+            boolean sort = Boolean.parseBoolean(ctx.queryParam("sort"));
+            String columnName = ctx.queryParam("columnName");
+
+            if(ctx.queryParam("sort").toLowerCase().equals("true") || ctx.queryParam("sort").toLowerCase().equals("false")){
+//                if(){
+//
+//                }
+//                PostCategoryComparator comparator = new PostCategoryComparator();
+//                ((List<Post>) objects).sort(comparator);
+            } else return objects;
+        }
         return objects;
     }
+
+//    public static <T> List<T> sort(Dao<T, Integer> dao, Context ctx) throws SQLException {
+//
+//    }
 }

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 @DatabaseTable(tableName = "post")
-public class Post implements Filtration {
+public class Post implements Filtration{
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField(foreign = true,foreignAutoRefresh = true)

@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -112,7 +111,10 @@ public class MainController {
         String serialized;
         if(doesQueryParamsEmpty(ctx,params)){
             serialized = objectMapper.writeValueAsString(getPagination(dao,page,size));
-        }else serialized = objectMapper.writeValueAsString(getPagination(getByQueryParams(dao,clazz,params,ctx),page,size));
+        }else{
+            LOGGER.info(String.valueOf(getPagination(getByQueryParams(dao,clazz,params,ctx),page,size)));
+            serialized = objectMapper.writeValueAsString(getPagination(getByQueryParams(dao,clazz,params,ctx),page,size));
+        }
         ctx.header("total-pages", String.valueOf(getPages(dao,getByQueryParams(dao,clazz,params,ctx),size)));
 
         ctx.result(serialized);
@@ -195,26 +197,33 @@ public class MainController {
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
         String searchString = ctx.queryParam("searchString");
+        Set<User> users =new HashSet<>();
 
-        String[] search = searchString.split(" ");
-        QueryBuilder<User, Integer> qb = userDao.queryBuilder();
-        QueryBuilder<User, Integer> qb2 = userDao.queryBuilder();
-        if(search.length == 1){
-            qb.where().like("fname",search[0]+"%").or().like("lname",search[0]+"%");
-        }else if(search.length!=0){
-            qb.where().like("fname", search[0] + "%").and().like("lname", search[1] + "%");
-            qb2.where().like("fname", search[1] + "%").and().like("lname", search[0] + "%");
+        String[] search = searchString.toLowerCase().split(" ");
+        if(search.length != 0){
+            for(User u:userDao.queryForAll()){
+                if(search.length == 1) {
+                    if (u.getLname().toLowerCase().contains(search[0])
+                            || u.getFname().toLowerCase().contains(search[0])
+                    ) {
+                        users.add(u);
+                    }
+                }else {
+                    if (u.getFname().toLowerCase().contains(search[0])
+                            && u.getLname().toLowerCase().contains(search[1])
+                                || u.getFname().toLowerCase().contains(search[1])
+                                && u.getLname().toLowerCase().contains(search[0])
+                    ) {
+                        users.add(u);
+                    }
+                }
+            }
         }
-        PreparedQuery<User> pq = qb.prepare();
-        PreparedQuery<User> pq2 = qb.prepare();
 
-        Set<User> set =new HashSet<>();
-        set.addAll(userDao.query(pq));
-        set.addAll(userDao.query(pq2));
 
         simpleModule.addSerializer(User.class, new UserGetSerializer(0));
-        ctx.result(objectMapper.writeValueAsString(userDao.query(pq)));
-
+        objectMapper.registerModule(simpleModule);
+        ctx.result(objectMapper.writeValueAsString(users));
     }
 
     public static <T> void delete(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
