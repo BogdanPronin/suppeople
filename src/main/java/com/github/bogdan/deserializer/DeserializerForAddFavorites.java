@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.github.bogdan.exception.WebException;
 import com.github.bogdan.model.Favorites;
+import com.github.bogdan.model.Post;
 import com.github.bogdan.model.User;
+import com.j256.ormlite.dao.Dao;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -21,11 +23,14 @@ import static com.github.bogdan.service.PostService.getPost;
 public class DeserializerForAddFavorites  extends StdDeserializer<Favorites> {
 
     private User user;
-    public DeserializerForAddFavorites(User user) {
+    public DeserializerForAddFavorites(User user,Dao<Post, Integer> postDao,Dao<Favorites, Integer> favoritesDao) {
         super(Favorites.class);
+        this.postDao = postDao;
         this.user = user;
+        this.favoritesDao = favoritesDao;
     }
-
+    private Dao<Post, Integer> postDao;
+    private Dao<Favorites, Integer> favoritesDao;
     public User getUser() {
         return user;
     }
@@ -43,12 +48,12 @@ public class DeserializerForAddFavorites  extends StdDeserializer<Favorites> {
             favorites.setUser(getUser());
 
             int post = getIntFieldValue(node,"post");
-            checkDoesSuchPostExist(post);
-            if(getPost(post).getUser().equals(user)){
+            checkDoesSuchPostExist(post,postDao);
+            if(getPost(post,postDao).getUser().equals(user)){
                 throw new WebException("Это ваш пост",400);
             }
-            checkUniqueFavorite(getUser().getId(),post);
-            favorites.setPost(getPost(post));
+            checkUniqueFavorite(getUser().getId(),post,favoritesDao);
+            favorites.setPost(getPost(post,postDao));
             return favorites;
         } catch (SQLException throwables) {
             throwables.printStackTrace();

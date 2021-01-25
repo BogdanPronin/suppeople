@@ -16,10 +16,9 @@ import java.sql.SQLException;
 public class AuthService {
     static Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
 
-    public static boolean authorization(Context ctx) throws SQLException {
+    public static boolean authorization(Context ctx,Dao<User, Integer> userDao) throws SQLException {
         String login = ctx.basicAuthCredentials().getUsername();
         String password = ctx.basicAuthCredentials().getPassword();
-        Dao<User, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
         for(User u:userDao.queryForAll()){
             if(u.getPhone() != null){
                 if(u.getPhone().equals(login)){
@@ -40,8 +39,8 @@ public class AuthService {
         }
         return false;
     }
-    public static void checkAuthorization(Context ctx) throws SQLException {
-        if(!authorization(ctx))
+    public static void checkAuthorization(Context ctx,Dao<User, Integer> userDao) throws SQLException {
+        if(!authorization(ctx,userDao))
             throw new WebException("Ошибка авторизации",400);
     }
 

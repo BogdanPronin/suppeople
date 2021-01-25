@@ -11,18 +11,9 @@ import com.j256.ormlite.dao.DaoManager;
 import java.sql.SQLException;
 
 public class ReportService {
-    public static Dao<ReportMessageCategory, Integer> reportMessageCategoryDao;
-    public static Dao<Report,Integer> reportDao;
-    static {
-        try {
-            reportMessageCategoryDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,ReportMessageCategory.class);
-            reportDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,Report.class);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
 
-    public static void checkDoesSuchReportMessageCategoryExist(int id) throws SQLException {
+
+    public static void checkDoesSuchReportMessageCategoryExist(int id,Dao<ReportMessageCategory, Integer> reportMessageCategoryDao) throws SQLException {
         if(reportMessageCategoryDao.queryForId(id)==null){
             throw new WebException("Такой категории не существует",400);
         }

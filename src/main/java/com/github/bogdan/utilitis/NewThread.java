@@ -2,6 +2,7 @@ package com.github.bogdan.utilitis;
 
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.model.Post;
+import com.github.bogdan.model.PostApplication;
 import com.github.bogdan.model.Status;
 import com.github.bogdan.model.User;
 import com.j256.ormlite.dao.Dao;
@@ -22,11 +23,15 @@ import static com.github.bogdan.service.PostApplicationService.getPostApplicatio
 import static com.github.bogdan.service.PostService.addPostQt;
 
 public class NewThread extends Thread{
-    Dao<User,Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,User.class);
-    Dao<Post,Integer> postDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,Post.class);
 
-    public NewThread() throws SQLException {
+    public NewThread( Dao<User,Integer> userDao,Dao<Post,Integer> postDao,Dao<PostApplication,Integer> postApplicationDao) throws SQLException {
+        this.userDao=userDao;
+        this.postDao=postDao;
+        this.postApplicationDao = postApplicationDao;
     }
+    private Dao<User,Integer> userDao;
+    private Dao<Post,Integer> postDao;
+    private Dao<PostApplication,Integer> postApplicationDao;
     Logger logger = LoggerFactory.getLogger(NewThread.class);
 
     public void run(){
@@ -38,9 +43,9 @@ public class NewThread extends Thread{
                     LocalDate l = LocalDate.parse(p.getDateOfCreate(), formatter);
                     if (p.getStatus() == Status.PROCESSING) {
 
-                        if (ChronoUnit.DAYS.between(l, LocalDate.now()) >= 15 && !getPostApplications(p.getId()).isEmpty()) {
+                        if (ChronoUnit.DAYS.between(l, LocalDate.now()) >= 15 && !getPostApplications(p.getId(),postApplicationDao).isEmpty()) {
                             p.setStatus(Status.COMPLETED);
-                            addPostQt(p);
+                            addPostQt(p,userDao,postApplicationDao);
                         }
                     }
                     postDao.update(p);

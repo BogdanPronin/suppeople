@@ -11,8 +11,6 @@ import java.sql.SQLException;
 
 public class Test {
     public static void main(String[] args) throws NoSuchFieldException, IllegalAccessException, InstantiationException, SQLException, UnsupportedEncodingException {
-        Dao<Post,Integer> postDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Post.class);
-//
-//        System.out.println(sort(postDao,));
+
     }
 }

@@ -9,16 +9,9 @@ import com.j256.ormlite.dao.DaoManager;
 import java.sql.SQLException;
 
 public class FavoritesService {
-    static Dao<Favorites, Integer> favoritesDao;
-    static {
-        try {
-            favoritesDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Favorites.class);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
 
-    public static void checkUniqueFavorite(int userId,int postId) throws SQLException {
+
+    public static void checkUniqueFavorite(int userId,int postId,Dao<Favorites, Integer> favoritesDao) throws SQLException {
         for(Favorites f: favoritesDao.queryForAll()){
             if(f.getUser().getId() == userId && f.getPost().getId() == postId){
                 throw new WebException("У вас уже есть этот пост в избранных",400);

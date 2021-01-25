@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
+import com.github.bogdan.model.Cities;
 import com.github.bogdan.model.User;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.j256.ormlite.dao.Dao;
@@ -16,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import static com.github.bogdan.service.CityService.checkDoesCityExist;
+import static com.github.bogdan.service.CityService.getCity;
 import static com.github.bogdan.service.ContactService.*;
 import static com.github.bogdan.service.ContactService.checkIsPhoneAlreadyInUse;
 import static com.github.bogdan.service.DeserializerService.*;
@@ -25,12 +28,15 @@ import static com.github.bogdan.service.LocalDateService.checkLocalDateFormat;
 public class DeserializerForChangeUser extends StdDeserializer<User> {
     static Logger LOGGER = LoggerFactory.getLogger(DeserializerForChangeUser.class);
 
-    public DeserializerForChangeUser(int id) {
+    public DeserializerForChangeUser(int id,Dao<User, Integer> userDao,Dao<Cities, Integer> citiesDao ) {
         super (User.class);
         this.id = id;
+        this.userDao = userDao;
+        this.citiesDao = citiesDao;
     }
-
+    private Dao<User, Integer> userDao;
     private int id;
+    private Dao<Cities, Integer> citiesDao;
 
     public int getId(){
         return id;
@@ -44,7 +50,6 @@ public class DeserializerForChangeUser extends StdDeserializer<User> {
 
     public User deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
         try {
-            Dao<User, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
             User userBase = userDao.queryForId(id);
             JsonNode node = jsonParser.getCodec().readTree(jsonParser);
             User u = new User();
@@ -60,13 +65,17 @@ public class DeserializerForChangeUser extends StdDeserializer<User> {
             String email = getOldStringFieldValue(node,"email",userBase.getEmail());
             u.setEmail(email);
 
+            int cityId = getOldIntFieldValue(node,"city",userBase.getCity().getId());
+            checkDoesCityExist(cityId,citiesDao);
+            u.setCity(getCity(cityId,citiesDao));
+
             checkValidateEmail(email);
-            checkIsEmailAlreadyInUse(email,id);
+            checkIsEmailAlreadyInUse(email,id,userDao);
 
             String phone = getOldStringFieldValue(node,"phone",userBase.getPhone());
             u.setPhone(phone);
             checkValidatePhone(phone);
-            checkIsPhoneAlreadyInUse(phone,id);
+            checkIsPhoneAlreadyInUse(phone,id,userDao);
 
             u.setDateOfRegister(userBase.getDateOfRegister());
 
@@ -80,7 +89,6 @@ public class DeserializerForChangeUser extends StdDeserializer<User> {
             String password = getOldPasswordFieldValue(node,"password",userBase.getPassword());
 
             u.setPassword(password);
-
             u.setId(id);
             return u;
 

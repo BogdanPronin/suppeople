@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.github.bogdan.model.Category;
+import com.j256.ormlite.dao.Dao;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -14,10 +15,11 @@ import static com.github.bogdan.service.CategoryService.checkDoesSuchCategoryExi
 import static com.github.bogdan.service.DeserializerService.getStringFieldValue;
 
 public class DeserializerForCategory extends StdDeserializer<Category> {
-    public DeserializerForCategory() {
+    public DeserializerForCategory(Dao<Category, Integer> categoryDao) {
         super(Category.class);
+        this.categoryDao = categoryDao;
     }
-
+    private Dao<Category, Integer> categoryDao;
     public DeserializerForCategory(int id) {
         super(Category.class);
         this.id = id;
@@ -40,7 +42,7 @@ public class DeserializerForCategory extends StdDeserializer<Category> {
 
         a.setName(getStringFieldValue(node,"name"));
         try {
-            checkDoesSuchCategoryExist(a.getName());
+            checkDoesSuchCategoryExist(a.getName(),categoryDao);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

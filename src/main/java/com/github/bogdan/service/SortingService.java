@@ -52,15 +52,16 @@ public class SortingService {
             }
         }
         if(tClass == Post.class){
+            boolean ignoreBoolean=true;
+            if(ctx.queryParam("sort").equalsIgnoreCase("false")){
+                ignoreBoolean=false;
+            }
             boolean sort = Boolean.parseBoolean(ctx.queryParam("sort"));
             String columnName = ctx.queryParam("columnName");
 
-            if(ctx.queryParam("sort").toLowerCase().equals("true") || ctx.queryParam("sort").toLowerCase().equals("false")){
-//                if(){
-//
-//                }
-//                PostCategoryComparator comparator = new PostCategoryComparator();
-//                ((List<Post>) objects).sort(comparator);
+            if(!ignoreBoolean){
+                PostCategoryComparator comparator = new PostCategoryComparator();
+                ((List<Post>) objects).sort(comparator);
             } else return objects;
         }
         return objects;

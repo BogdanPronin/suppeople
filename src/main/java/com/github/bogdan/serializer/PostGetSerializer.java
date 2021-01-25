@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.github.bogdan.model.Post;
 import com.github.bogdan.model.PostApplication;
+import com.j256.ormlite.dao.Dao;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -13,9 +14,11 @@ import static com.github.bogdan.service.PostApplicationService.getPostApplicatio
 
 public class PostGetSerializer extends StdSerializer<Post> {
 
-    public PostGetSerializer() {
+    public PostGetSerializer(Dao<PostApplication, Integer> postApplicationDao) {
         super(Post.class);
+        this.postApplicationDao = postApplicationDao;
     }
+    private Dao<PostApplication, Integer> postApplicationDao;
 
     @Override
     public void serialize(Post post, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
@@ -33,7 +36,7 @@ public class PostGetSerializer extends StdSerializer<Post> {
 
         jsonGenerator.writeArrayFieldStart("postApplications");
         try {
-            for(PostApplication p: getPostApplications(post.getId())){
+            for(PostApplication p: getPostApplications(post.getId(),postApplicationDao)){
                 jsonGenerator.writeObject(p);
             }
         } catch (SQLException throwables) {

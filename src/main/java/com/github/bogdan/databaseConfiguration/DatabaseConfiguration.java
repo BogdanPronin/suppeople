@@ -10,10 +10,11 @@ import java.sql.SQLException;
 import static com.github.bogdan.databaseConfiguration.DatabasePath.getBagaPath;
 
 public class DatabaseConfiguration {
-    public static ConnectionSource connectionSource;
-    static {
+    private ConnectionSource connectionSource;
+
+    public DatabaseConfiguration(String jdbcConnectionString) {
         try{
-            connectionSource = new JdbcConnectionSource(getBagaPath());
+            connectionSource = new JdbcConnectionSource(jdbcConnectionString);
             TableUtils.createTableIfNotExists(connectionSource, User.class);
             TableUtils.createTableIfNotExists(connectionSource, Category.class);
             TableUtils.createTableIfNotExists(connectionSource, Post.class);
@@ -27,5 +28,9 @@ public class DatabaseConfiguration {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public ConnectionSource getConnectionSource() {
+        return connectionSource;
     }
 }

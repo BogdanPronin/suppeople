@@ -17,9 +17,9 @@ import io.javalin.Javalin;
 import java.sql.SQLException;
 
 public class Main {
+
     public static void main(String[] args) throws SQLException {
-        NewThread thread = new NewThread();
-        thread.start();
+
 
         Javalin app = Javalin.create(javalinConfig -> {
             javalinConfig.enableDevLogging();
@@ -27,13 +27,24 @@ public class Main {
             javalinConfig.defaultContentType = "application/json";
         }).start(22867);
 
-        Dao<User, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
-        Dao<Category,Integer> categoryDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Category.class);
-        Dao<Post,Integer> postDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Post.class);
-        Dao<PostApplication,Integer> postApplicationDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,PostApplication.class);
-        Dao<Favorites, Integer> favoritesDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Favorites.class);
-        Dao<Report, Integer> reportDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,Report.class);
-        Dao<Cities, Integer> citiesDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,Cities.class);
+
+        if (args.length == 0) {
+            throw new RuntimeException("Args can't be null");
+        }
+
+        String jdbcConnectionString = "jdbc:sqlite:" + args[0];
+        DatabasePath.setPath(jdbcConnectionString);
+        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(jdbcConnectionString);
+
+        Dao<User, Integer> userDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(), User.class);
+        Dao<Category,Integer> categoryDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(), Category.class);
+        Dao<Post,Integer> postDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(), Post.class);
+        Dao<PostApplication,Integer> postApplicationDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(),PostApplication.class);
+        Dao<Favorites, Integer> favoritesDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(), Favorites.class);
+        Dao<Report, Integer> reportDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(),Report.class);
+        Dao<Cities, Integer> citiesDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(),Cities.class);
+        NewThread thread = new NewThread(userDao,postDao,postApplicationDao);
+        thread.start();
 
         app.post("/users", ctx -> MainController.add(ctx,userDao,User.class));
         app.get("/users", ctx -> MainController.get(ctx,userDao, User.class));

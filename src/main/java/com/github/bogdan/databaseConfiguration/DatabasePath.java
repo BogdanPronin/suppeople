@@ -10,4 +10,6 @@ public class DatabasePath {
         String salaPath="jdbc:sqlite:С:\\Users\\MI\\Desktop\\suppeople.sqlite";
         return salaPath;
     }
+    
+    
 }

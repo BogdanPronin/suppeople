@@ -11,16 +11,8 @@ import io.javalin.http.Context;
 import java.sql.SQLException;
 
 public class UserService {
-    static Dao<User, Integer> userDao;
 
-    static {
 
-        try {
-            userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
 
 
 
@@ -29,13 +21,13 @@ public class UserService {
             throw new WebException("You aren't admin",400);
         }
     }
-    public static boolean checkBooleanIsUserAdmin(int userId) throws SQLException {
+    public static boolean checkBooleanIsUserAdmin(int userId,Dao<User, Integer> userDao) throws SQLException {
         if(userDao.queryForId(userId).getRole() == Role.ADMIN){
             return true;
         }
         return false;
     }
-    public static void checkIsUserAdmin(int userId) throws SQLException {
+    public static void checkIsUserAdmin(int userId,Dao<User, Integer> userDao) throws SQLException {
         if(userDao.queryForId(userId).getRole() != Role.ADMIN){
             throw new WebException("You aren't admin",400);
         }
@@ -47,8 +39,8 @@ public class UserService {
     }
 
 
-    public static void checkIsUserAdmin(Context ctx) throws SQLException {
-        checkIsUserAdmin(getUserByLogin(ctx.basicAuthCredentials().getUsername()));
+    public static void checkIsUserAdmin(Context ctx,Dao<User, Integer> userDao) throws SQLException {
+        checkIsUserAdmin(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao));
     }
 
 
@@ -58,7 +50,7 @@ public class UserService {
         }
     }
 
-    public static User getUserByLogin(String login) throws SQLException {
+    public static User getUserByLogin(String login,Dao<User, Integer> userDao) throws SQLException {
         for(User user: userDao.queryForAll()){
             if(user.getPhone()!=null){
                 if(user.getPhone().equals(login)){
@@ -74,11 +66,11 @@ public class UserService {
         return null;
     }
 
-    public static User getUserById(int id) throws SQLException {
+    public static User getUserById(int id,Dao<User, Integer> userDao) throws SQLException {
         return userDao.queryForId(id);
     }
 
-    public static void checkDoesSuchUserExist(int id) throws SQLException {
+    public static void checkDoesSuchUserExist(int id,Dao<User, Integer> userDao) throws SQLException {
         if(userDao.queryForId(id)==null){
             throw new WebException("User with such id isn't exist",400);
         }

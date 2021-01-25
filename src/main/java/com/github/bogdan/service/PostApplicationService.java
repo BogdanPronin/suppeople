@@ -11,19 +11,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class PostApplicationService {
-    static Dao<PostApplication,Integer> postApplicationDao;
-    static Dao<Post,Integer> postDao;
 
-    static {
-        try {
-            postApplicationDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,PostApplication.class);
-            postDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, Post.class);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
 
-    public static void checkDoesSuchApplicationExist(int userId,int postId) throws SQLException {
+    public static void checkDoesSuchApplicationExist(int userId,int postId,Dao<PostApplication,Integer> postApplicationDao) throws SQLException {
         for(PostApplication p:postApplicationDao.queryForAll()){
             if(p.getPost().getId() == postId && p.getUser().getId() == userId){
                 throw new WebException("You have already written application for this post",400);
@@ -31,23 +21,23 @@ public class PostApplicationService {
         }
     }
 
-    public static void checkDoesSuchApplicationExist(int postApplicationId) throws SQLException {
+    public static void checkDoesSuchApplicationExist(int postApplicationId,Dao<PostApplication,Integer> postApplicationDao) throws SQLException {
         if(postApplicationDao.queryForId(postApplicationId) == null){
             throw new WebException("Such application doesn't exist",400);
         }
     }
 
-    public static void checkIsItUsersApplication(int applicationId,int userId) throws SQLException {
+    public static void checkIsItUsersApplication(int applicationId,int userId,Dao<PostApplication,Integer> postApplicationDao) throws SQLException {
         if(postApplicationDao.queryForId(applicationId).getUser().getId() == userId){
             throw new WebException("It isn't your application",400);
         }
     }
 
-    public static PostApplication getPostApplication(int postApplicationId) throws SQLException {
+    public static PostApplication getPostApplication(int postApplicationId,Dao<PostApplication,Integer> postApplicationDao) throws SQLException {
         return postApplicationDao.queryForId(postApplicationId);
     }
 
-    public static ArrayList<PostApplication> getPostApplications(int postId) throws SQLException {
+    public static ArrayList<PostApplication> getPostApplications(int postId,Dao<PostApplication,Integer> postApplicationDao) throws SQLException {
         ArrayList<PostApplication> postApplications = new ArrayList<>();
         for(PostApplication p: postApplicationDao.queryForAll()){
             if(p.getPost().getId() == postId){
@@ -57,7 +47,7 @@ public class PostApplicationService {
         return postApplications;
     }
 
-    public static void checkItIsNotUserPost(User user, int postId) throws SQLException {
+    public static void checkItIsNotUserPost(User user, int postId,Dao<Post,Integer> postDao) throws SQLException {
         if(postDao.queryForId(postId).getUser().equals(user)){
             throw new WebException("Вы не можете отправлять предложения к своим постам",404);
         }

@@ -9,6 +9,7 @@ import com.github.bogdan.exception.WebException;
 import com.github.bogdan.model.Report;
 import com.github.bogdan.model.User;
 import com.github.bogdan.service.UserService;
+import com.j256.ormlite.dao.Dao;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -20,11 +21,13 @@ public class DeserializerForAddReport extends StdDeserializer<Report> {
 
     private User user;
 
-    public DeserializerForAddReport(User user) {
+    public DeserializerForAddReport(User user,Dao<User,Integer> userDao) {
         super(Report.class);
         this.user = user;
+        this.userDao = userDao;
     }
 
+    private Dao<User,Integer> userDao;
     public User getUser() {
         return user;
     }
@@ -48,13 +51,13 @@ public class DeserializerForAddReport extends StdDeserializer<Report> {
             report.setImage(image);
 
             int user = getIntFieldValue(node,"reportedUser");
-            checkDoesSuchUserExist(user);
+            checkDoesSuchUserExist(user,userDao);
             if(getUser().getId() == user){
                 throw new WebException("Вы не можете пожаловаться на самого себя",400);
             }
             int category = getIntFieldValue(node,"reportMessageCategory");
 
-            report.setReportedUser(UserService.getUserById(user));
+            report.setReportedUser(UserService.getUserById(user,userDao));
 
             return report;
         } catch (SQLException throwables) {

@@ -13,14 +13,6 @@ import org.apache.commons.validator.routines.EmailValidator;
 import java.sql.SQLException;
 
 public class ContactService {
-    static Dao<User, Integer> userDao;
-    static {
-        try {
-            userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, User.class);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
 
 
 
@@ -57,7 +49,7 @@ public class ContactService {
 
     }
 
-    public static void checkIsPhoneAlreadyInUse(String phone) throws SQLException {
+    public static void checkIsPhoneAlreadyInUse(String phone,Dao<User, Integer> userDao) throws SQLException {
         for(User user: userDao.queryForAll()){
             if(user.getPhone()!= null) {
                 if (user.getPhone().equals(phone)) {
@@ -67,7 +59,7 @@ public class ContactService {
         }
     }
 
-    public static void checkIsPhoneAlreadyInUse(String phone,int userId) throws SQLException {
+    public static void checkIsPhoneAlreadyInUse(String phone,int userId,Dao<User, Integer> userDao) throws SQLException {
         for(User user: userDao.queryForAll()){
             if(user.getPhone()!= null){
                 if(user.getPhone().equals(phone) && user.getId() != userId){
@@ -77,7 +69,7 @@ public class ContactService {
         }
     }
 
-    public static void checkIsEmailAlreadyInUse(String email) throws SQLException {
+    public static void checkIsEmailAlreadyInUse(String email,Dao<User, Integer> userDao) throws SQLException {
         for(User user: userDao.queryForAll()){
             if(user.getEmail()!= null){
                 if(user.getEmail().equals(email)){
@@ -88,10 +80,12 @@ public class ContactService {
         }
     }
 
-    public static void checkIsEmailAlreadyInUse(String email,int userId) throws SQLException {
+    public static void checkIsEmailAlreadyInUse(String email,int userId,Dao<User, Integer> userDao) throws SQLException {
         for(User user: userDao.queryForAll()){
-            if(user.getEmail().equals(email) && user.getId()!=userId){
-                throw new WebException("Данный почтовый адрес уже используется",400);
+            if(user.getEmail()!= null) {
+                if (user.getEmail().equals(email) && user.getId() != userId) {
+                    throw new WebException("Данный почтовый адрес уже используется", 400);
+                }
             }
         }
     }

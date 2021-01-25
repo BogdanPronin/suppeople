@@ -5,9 +5,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.github.bogdan.model.Cities;
 import com.github.bogdan.model.Role;
 import com.github.bogdan.model.User;
 import com.google.i18n.phonenumbers.NumberParseException;
+import com.j256.ormlite.dao.Dao;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
@@ -24,9 +26,13 @@ import static com.github.bogdan.service.UserService.*;
 
 public class DeserializerForAddUser extends StdDeserializer<User> {
 
-    public DeserializerForAddUser() {
+    public DeserializerForAddUser(Dao<User,Integer> userDao, Dao<Cities, Integer> citiesDao) {
         super(User.class);
+        this.userDao = userDao;
+        this.citiesDao = citiesDao;
     }
+    private Dao<User,Integer> userDao;
+    private Dao<Cities, Integer> citiesDao;
 
     @Override
     public User deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
@@ -44,14 +50,14 @@ public class DeserializerForAddUser extends StdDeserializer<User> {
             if(email!=null) {
                 u.setEmail(email);
                 checkValidateEmail(email);
-                checkIsEmailAlreadyInUse(email);
+                checkIsEmailAlreadyInUse(email,userDao);
             }
 
             String phone = getOldStringFieldValue(node,"phone",null);
             if(phone!=null){
                 u.setPhone(phone);
                 checkValidatePhone(phone);
-                checkIsPhoneAlreadyInUse(phone);
+                checkIsPhoneAlreadyInUse(phone,userDao);
             }
 
             checkIsEmailPhoneNull(phone,email);
@@ -77,8 +83,8 @@ public class DeserializerForAddUser extends StdDeserializer<User> {
             u.setPassword(hashedPassword);
 
             int city = getIntFieldValue(node,"city");
-            checkDoesCityExist(city);
-            u.setCity(getCity(city));
+            checkDoesCityExist(city,citiesDao);
+            u.setCity(getCity(city,citiesDao));
 
             return u;
 
