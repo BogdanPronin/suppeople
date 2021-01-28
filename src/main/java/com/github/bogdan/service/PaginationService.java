@@ -38,7 +38,9 @@ public class PaginationService {
     public static <T> int getPages(Dao<T,Integer>  dao,ArrayList<T> list, int size) throws SQLException {
         float a;
         if(!list.isEmpty()){
-            a = list.size()/size;
+            if(list.size()%list.size()!=0){
+                a = list.size()/size + 1;
+            }else a = list.size()/size;
         }else a = dao.queryForAll().size()/size;
 
         return (int) Math.ceil(a);

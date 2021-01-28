@@ -55,7 +55,7 @@ public class SortingService {
                             LOGGER.info("PostApplication obj:");
                             if (field.getName().equals("post")){
                                 if(postDao.queryForId(Integer.valueOf(currentParam))!=null){
-                                    LOGGER.info("sssss");
+
                                     if(postDao.queryForId(Integer.valueOf(currentParam)).getUser().getId()!=userId && !checkBooleanIsUserAdmin(userId,userDao)){
                                         throw new WebException("Это не ваш пост",400);
                                     }
@@ -63,11 +63,10 @@ public class SortingService {
                                     throw new WebException("Такого поста не существует",400);
                                 }
                             }
-                            objects.add(obj);
                         }else{
                             LOGGER.info("Obj:"+obj);
-                            objects.add(obj);
                         }
+                        objects.add(obj);
 
                     }
                 }
