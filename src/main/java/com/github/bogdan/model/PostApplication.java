@@ -90,6 +90,7 @@ public class PostApplication implements Filtration{
     public ArrayList<String> getQueryParams() {
         ArrayList<String> s = new ArrayList<>();
         s.add("id");
+        s.add("post");
         return s;
     }
 }
