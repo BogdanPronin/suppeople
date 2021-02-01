@@ -61,14 +61,6 @@ public class SortingService {
                                 }else {
                                     throw new WebException("Такого поста не существует",400);
                                 }
-                            }else if (field.getName().equals("user")){
-                                if(userDao.queryForId(Integer.valueOf(currentParam))!=null){
-                                    if(userId!= Integer.valueOf(currentParam) && !checkBooleanIsUserAdmin(userId,userDao)) {
-                                        throw new WebException("Вы не может", 400);
-                                    }
-                                }else {
-                                    throw new WebException("Такого поста не существует",400);
-                                }
                             }
                         }else{
                             LOGGER.info("Obj:"+obj);

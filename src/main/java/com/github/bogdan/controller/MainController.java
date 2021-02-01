@@ -59,9 +59,6 @@ public class MainController {
         }
     }
 
-    public MainController() throws SQLException {
-    }
-
     public static <T> void add(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
         ctx.header("content-type:app/json");
         SimpleModule simpleModule = new SimpleModule();
@@ -172,18 +169,6 @@ public class MainController {
         ctx.result(serialized);
 
     }
-    public static void getAuthorized(Context ctx) throws JsonProcessingException, SQLException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        checkDoesBasicAuthEmpty(ctx);
-        checkAuthorization(ctx,userDao);
-        SimpleModule simpleModule = new SimpleModule();
-
-        simpleModule.addSerializer(User.class, new UserGetSerializer(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId()));
-        objectMapper.registerModule(simpleModule);
-
-        ctx.result(objectMapper.writeValueAsString(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao)));
-     }
     public static <T> void change(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
         checkDoesBasicAuthEmpty(ctx);
 
@@ -222,39 +207,6 @@ public class MainController {
         updated(ctx);
     }
 
-    public static void search(Context ctx, Dao<User,Integer> userDao) throws SQLException, JsonProcessingException {
-        SimpleModule simpleModule = new SimpleModule();
-        ObjectMapper objectMapper = new ObjectMapper();
-        String searchString = ctx.queryParam("searchString");
-        Set<User> users =new HashSet<>();
-
-        String[] search = searchString.toLowerCase().split(" ");
-        if(search.length != 0){
-            for(User u:userDao.queryForAll()){
-                if(search.length == 1) {
-                    if (u.getLname().toLowerCase().contains(search[0])
-                            || u.getFname().toLowerCase().contains(search[0])
-                    ) {
-                        users.add(u);
-                    }
-                }else {
-                    if (u.getFname().toLowerCase().contains(search[0])
-                            && u.getLname().toLowerCase().contains(search[1])
-                                || u.getFname().toLowerCase().contains(search[1])
-                                && u.getLname().toLowerCase().contains(search[0])
-                    ) {
-                        users.add(u);
-                    }
-                }
-            }
-        }
-
-
-        simpleModule.addSerializer(User.class, new UserGetSerializer(0));
-        objectMapper.registerModule(simpleModule);
-        ctx.result(objectMapper.writeValueAsString(users));
-    }
-
     public static <T> void delete(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
         checkDoesBasicAuthEmpty(ctx);
         ctx.header("content-type:app/json");
@@ -289,5 +241,94 @@ public class MainController {
         Object obj = dao.queryForId(id);
         dao.delete((T) obj);
         deleted(ctx);
+    }
+
+    public static void search(Context ctx, Dao<User,Integer> userDao) throws SQLException, JsonProcessingException {
+        SimpleModule simpleModule = new SimpleModule();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String searchString = ctx.queryParam("searchString");
+        Set<User> users =new HashSet<>();
+
+        String[] search = searchString.toLowerCase().split(" ");
+        if(search.length != 0){
+            for(User u:userDao.queryForAll()){
+                if(search.length == 1) {
+                    if (u.getLname().toLowerCase().contains(search[0])
+                            || u.getFname().toLowerCase().contains(search[0])
+                    ) {
+                        users.add(u);
+                    }
+                }else {
+                    if (u.getFname().toLowerCase().contains(search[0])
+                            && u.getLname().toLowerCase().contains(search[1])
+                            || u.getFname().toLowerCase().contains(search[1])
+                            && u.getLname().toLowerCase().contains(search[0])
+                    ) {
+                        users.add(u);
+                    }
+                }
+            }
+        }
+
+
+        simpleModule.addSerializer(User.class, new UserGetSerializer(0));
+        objectMapper.registerModule(simpleModule);
+        ctx.result(objectMapper.writeValueAsString(users));
+    }
+    public static void getAuthorized(Context ctx) throws JsonProcessingException, SQLException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        checkDoesBasicAuthEmpty(ctx);
+        checkAuthorization(ctx,userDao);
+        SimpleModule simpleModule = new SimpleModule();
+
+        simpleModule.addSerializer(User.class, new UserGetSerializer(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId()));
+        objectMapper.registerModule(simpleModule);
+
+        ctx.result(objectMapper.writeValueAsString(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao)));
+    }
+    public static void getUserApplications(Context ctx) throws SQLException, JsonProcessingException {
+        SimpleModule simpleModule = new SimpleModule();
+        ObjectMapper objectMapper = new ObjectMapper();
+//        simpleModule.addSerializer(Post.class, new PostGetSerializer(postApplicationDao));
+//        simpleModule.addSerializer(Category.class, new CategoryGetSerializer());
+        simpleModule.addSerializer(PostApplication.class, new PostApplicationSerializer());
+
+        int page = getPage(ctx);
+        int size = getPagesSize(ctx);
+        ArrayList<PostApplication> postApplicationArrayList = new ArrayList<>();
+        int userId = 0;
+        if(ctx.basicAuthCredentialsExist()){
+            if(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao)!=null) {
+                userId = getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId();
+            }
+        }
+        simpleModule.addSerializer(User.class, new UserGetSerializer(userId));
+        objectMapper.registerModule(simpleModule);
+
+        if(ctx.queryParam("user")!= null){
+            checkIsUserAdmin(ctx,userDao);
+            if(userDao.queryForId(Integer.parseInt(ctx.queryParam("user")))!=null){
+                userId = Integer.parseInt(ctx.queryParam("user"));
+                for(PostApplication postApplication:postApplicationDao.queryForAll()){
+                    if(postApplication.getUser().getId()==userId){
+                        postApplicationArrayList.add(postApplication);
+                    }
+                }
+            }
+        }else {
+            for(PostApplication postApplication:postApplicationDao.queryForAll()){
+                if(postApplication.getUser().getId()==userId){
+                    postApplicationArrayList.add(postApplication);
+                }
+            }
+        }
+        String serialized;
+        serialized = objectMapper.writeValueAsString(getPagination(postApplicationArrayList,page,size));
+
+        ctx.header("total-pages", String.valueOf(getPages(postApplicationDao,postApplicationArrayList,size)));
+
+        ctx.result(serialized);
+
     }
 }

@@ -91,7 +91,6 @@ public class PostApplication implements Filtration{
         ArrayList<String> s = new ArrayList<>();
         s.add("id");
         s.add("post");
-        s.add("user");
         return s;
     }
 }
