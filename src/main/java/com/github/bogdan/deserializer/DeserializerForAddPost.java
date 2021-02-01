@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
-import com.github.bogdan.model.Category;
-import com.github.bogdan.model.Cities;
-import com.github.bogdan.model.Post;
-import com.github.bogdan.model.User;
+import com.github.bogdan.model.*;
 import com.github.bogdan.service.CategoryService;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -62,7 +59,7 @@ public class DeserializerForAddPost extends StdDeserializer<Post> {
 
             String image = getOldStringFieldValue(node,"image",null);
             post.setImage(image);
-
+            post.setStatus(Status.CREATED);
             LocalDate localDate = LocalDate.now();
             post.setDateOfCreate(localDate.toString());
 

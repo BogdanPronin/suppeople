@@ -141,10 +141,10 @@ public class MainController {
         if(doesQueryParamsEmpty(ctx,params)){
             serialized = objectMapper.writeValueAsString(getPagination(dao,page,size));
         }else{
-            LOGGER.info(String.valueOf(getPagination(getByQueryParams(userId,userDao,postDao,dao,clazz,params,ctx),page,size)));
-            serialized = objectMapper.writeValueAsString(getPagination(getByQueryParams(userId,userDao,postDao,dao,clazz,params,ctx),page,size));
+            LOGGER.info(String.valueOf(getPagination(getByQueryParams(userId,userDao,postDao,postApplicationDao,dao,clazz,params,ctx),page,size)));
+            serialized = objectMapper.writeValueAsString(getPagination(getByQueryParams(userId,userDao,postDao,postApplicationDao,dao,clazz,params,ctx),page,size));
         }
-        ctx.header("total-pages", String.valueOf(getPages(dao,getByQueryParams(userId,userDao,postDao,dao,clazz,params,ctx),size)));
+        ctx.header("total-pages", String.valueOf(getPages(dao,getByQueryParams(userId,userDao,postDao,postApplicationDao,dao,clazz,params,ctx),size)));
 
         ctx.result(serialized);
     }

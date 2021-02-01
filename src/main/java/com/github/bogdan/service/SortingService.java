@@ -35,7 +35,7 @@ public class SortingService {
         return methodNames;
     }
 
-    public static <T>ArrayList<T> getByQueryParams(int userId,Dao<User, Integer> userDao,Dao<Post,Integer> postDao, Dao<T,Integer> dao, Class<T> tClass, ArrayList<String> queryParams, Context ctx) throws NoSuchFieldException, SQLException, IllegalAccessException, UnsupportedEncodingException {
+    public static <T>ArrayList<T> getByQueryParams(int userId,Dao<User, Integer> userDao,Dao<Post,Integer> postDao,Dao<PostApplication,Integer> postApplicationDao, Dao<T,Integer> dao, Class<T> tClass, ArrayList<String> queryParams, Context ctx) throws NoSuchFieldException, SQLException, IllegalAccessException, UnsupportedEncodingException {
         ArrayList<T> objects = new ArrayList<>();
         for(String s:queryParams){
             Field field = tClass.getDeclaredField(s);
@@ -55,9 +55,16 @@ public class SortingService {
                             LOGGER.info("PostApplication obj:");
                             if (field.getName().equals("post")){
                                 if(postDao.queryForId(Integer.valueOf(currentParam))!=null){
-
                                     if(postDao.queryForId(Integer.valueOf(currentParam)).getUser().getId()!=userId && !checkBooleanIsUserAdmin(userId,userDao)){
                                         throw new WebException("Это не ваш пост",400);
+                                    }
+                                }else {
+                                    throw new WebException("Такого поста не существует",400);
+                                }
+                            }else if (field.getName().equals("user")){
+                                if(userDao.queryForId(Integer.valueOf(currentParam))!=null){
+                                    if(userId!= Integer.valueOf(currentParam) && !checkBooleanIsUserAdmin(userId,userDao)) {
+                                        throw new WebException("Вы не может", 400);
                                     }
                                 }else {
                                     throw new WebException("Такого поста не существует",400);
