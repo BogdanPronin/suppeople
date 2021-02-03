@@ -6,9 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
-import com.github.bogdan.model.Post;
-import com.github.bogdan.model.PostApplication;
-import com.github.bogdan.model.User;
+import com.github.bogdan.model.*;
 import com.github.bogdan.service.UserService;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -61,6 +59,7 @@ public class DeserializerForAddPostApplication extends StdDeserializer<PostAppli
             p.setMessage(message);
 
             checkDoesSuchApplicationExist(userId,postId,postApplicationDao);
+            p.setStatus(ApplicationStatus.ADDED);
             return p;
         } catch (SQLException throwables) {
             throwables.printStackTrace();

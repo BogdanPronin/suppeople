@@ -34,15 +34,15 @@ public class PostGetSerializer extends StdSerializer<Post> {
             jsonGenerator.writeStringField("status", post.getStatus().toString());
         }else jsonGenerator.writeStringField("status",null);
 
-        jsonGenerator.writeArrayFieldStart("postApplications");
-        try {
-            for(PostApplication p: getPostApplications(post.getId(),postApplicationDao)){
-                jsonGenerator.writeObject(p);
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        jsonGenerator.writeEndArray();
+//        jsonGenerator.writeArrayFieldStart("postApplications");
+//        try {
+//            for(PostApplication p: getPostApplications(post.getId(),postApplicationDao)){
+//                jsonGenerator.writeObject(p);
+//            }
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
+//        jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
     }
 }

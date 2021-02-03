@@ -18,15 +18,18 @@ public class PostApplication implements Filtration{
     private String message;
     @DatabaseField
     private ApplicationStatus status;
+    @DatabaseField
+    private boolean isWatched;
 
     public PostApplication() {
     }
 
-    public PostApplication(User user, Post post, String message, ApplicationStatus status) {
+    public PostApplication(User user, Post post, String message, ApplicationStatus status, boolean isWatched) {
         this.user = user;
         this.post = post;
         this.message = message;
         this.status = status;
+        this.isWatched = isWatched;
     }
 
     public int getId() {
@@ -69,12 +72,21 @@ public class PostApplication implements Filtration{
         this.status = status;
     }
 
+    public boolean isWatched() {
+        return isWatched;
+    }
+
+    public void setWatched(boolean watched) {
+        isWatched = watched;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PostApplication that = (PostApplication) o;
         return id == that.id &&
+                isWatched == that.isWatched &&
                 Objects.equals(user, that.user) &&
                 Objects.equals(post, that.post) &&
                 Objects.equals(message, that.message) &&
@@ -83,7 +95,7 @@ public class PostApplication implements Filtration{
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, post, message, status);
+        return Objects.hash(id, user, post, message, status, isWatched);
     }
 
     @Override
@@ -91,6 +103,7 @@ public class PostApplication implements Filtration{
         ArrayList<String> s = new ArrayList<>();
         s.add("id");
         s.add("post");
+        s.add("isWatched");
         return s;
     }
 }

@@ -72,7 +72,7 @@ public class MainController {
         }
 
         if(clazz == Post.class){
-            simpleModule.addDeserializer(Post.class, new DeserializerForAddPost(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao),categoryDao));
+            simpleModule.addDeserializer(Post.class, new DeserializerForAddPost(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao),categoryDao,citiesDao));
         }else if(clazz == Category.class){
             checkIsUserAdmin(ctx,userDao);
             simpleModule.addDeserializer(Category.class,new DeserializerForCategory(categoryDao));

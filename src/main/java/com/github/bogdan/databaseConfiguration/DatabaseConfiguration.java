@@ -24,6 +24,7 @@ public class DatabaseConfiguration {
             TableUtils.createTableIfNotExists(connectionSource, Report.class);
             TableUtils.createTableIfNotExists(connectionSource, Favorites.class);
             TableUtils.createTableIfNotExists(connectionSource, ReportMessageCategory.class);
+            TableUtils.createTableIfNotExists(connectionSource, Notifications.class);
 
         } catch (SQLException e) {
             e.printStackTrace();

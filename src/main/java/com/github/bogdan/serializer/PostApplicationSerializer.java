@@ -18,6 +18,9 @@ public class PostApplicationSerializer extends StdSerializer<PostApplication> {
         jsonGenerator.writeNumberField("postId",postApplication.getPost().getId());
         jsonGenerator.writeObjectField("applicationUser",postApplication.getUser());
         jsonGenerator.writeStringField("message",postApplication.getMessage());
+        if(postApplication.getStatus()!=null){
+            jsonGenerator.writeStringField("status",postApplication.getStatus().toString());
+        }else jsonGenerator.writeStringField("status",null);
         jsonGenerator.writeEndObject();
     }
 }

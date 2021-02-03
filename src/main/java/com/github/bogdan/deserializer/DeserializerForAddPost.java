@@ -5,13 +5,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.model.*;
 import com.github.bogdan.service.CategoryService;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
+
 import java.io.IOException;
-import java.security.PrivateKey;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import static com.github.bogdan.service.CategoryService.getCategory;
@@ -20,14 +18,15 @@ import static com.github.bogdan.service.CityService.getCity;
 import static com.github.bogdan.service.DeserializerService.*;
 
 public class DeserializerForAddPost extends StdDeserializer<Post> {
-    public DeserializerForAddPost(User user,Dao<Category,Integer> categoryDao) {
+    public DeserializerForAddPost(User user,Dao<Category,Integer> categoryDao,Dao<Cities, Integer> citiesDao) {
         super(Post.class);
         this.user = user;
         this.categoryDao = categoryDao;
+        this.citiesDao = citiesDao;
     }
     private User user;
     private Dao<Category,Integer> categoryDao;
-    private Dao<Cities, Integer> cityDao;
+    private Dao<Cities, Integer> citiesDao;
     public User getUser() {
         return user;
     }
@@ -54,8 +53,8 @@ public class DeserializerForAddPost extends StdDeserializer<Post> {
             post.setMessage(message);
 
             int city = getIntFieldValue(node,"city");
-            checkDoesCityExist(city,cityDao);
-            post.setCity(getCity(city,cityDao));
+            checkDoesCityExist(city, citiesDao);
+            post.setCity(getCity(city, citiesDao));
 
             String image = getOldStringFieldValue(node,"image",null);
             post.setImage(image);
