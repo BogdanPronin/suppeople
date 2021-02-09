@@ -67,11 +67,8 @@ public class DeserializerForChangePostApplication extends StdDeserializer<PostAp
             p.setStatus(postApplicationBase.getStatus());
             checkPostUser(postApplicationBase.getPost().getId(),getUser().getId(),postDao);
             if(postApplicationBase.getStatus() == ApplicationStatus.ADDED){
-                String status = getOldStringFieldValue(node, "status",null);
-                if(status != null){
-                    p.setStatus(ApplicationStatus.valueOf(status));
-                }
-
+                String status = getOldStringFieldValue(node, "status","ADDED");
+                p.setStatus(ApplicationStatus.valueOf(status));
             }
 
 

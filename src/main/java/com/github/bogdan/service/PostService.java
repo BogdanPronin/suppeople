@@ -65,7 +65,7 @@ public class PostService {
         ArrayList<PostApplication> postApplications = getPostApplications(p.getId(),postApplicationDao);
         for(PostApplication a:postApplications){
             int qt = a.getUser().getPostsQt();
-            if(a.getStatus()== ApplicationStatus.ACCEPTED) {
+            if(a.getStatus() == ApplicationStatus.ACCEPTED) {
                 a.getUser().setPostsQt(qt + 1);
                 userDao.update(a.getUser());
             }
