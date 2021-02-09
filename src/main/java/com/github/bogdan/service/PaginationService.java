@@ -38,14 +38,28 @@ public class PaginationService {
         return list;
     }
 
-    public static <T> int getPages(Dao<T, Integer> dao, ArrayList<T> list, int size) throws SQLException {
-        float a;
+    public static <T> int getPages( ArrayList<T> list, int size) throws SQLException {
+        int a = 0;
         if (!list.isEmpty()) {
+            LOGGER.info("total-page: "+a);
             if (list.size() % size != 0) {
                 a = list.size() / size + 1;
-            } else a = list.size() / size;
-        } else a = 0;
-
+            } else if(list.size()< size){
+                a = 1;
+            }else a = list.size() / size;
+        } else a = 1;
+        return (int) Math.ceil(a);
+    }
+    public static <T> int getDaoPages( Dao<T,Integer> dao, int size) throws SQLException {
+        int a = 0;
+        for(T obj:dao.queryForAll()){
+            a++;
+        }
+        if (a % size != 0) {
+            a = a / size + 1;
+        } else if(a < size){
+            a = 1;
+        }else a = a / size;
         return (int) Math.ceil(a);
     }
 }

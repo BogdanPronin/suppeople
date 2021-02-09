@@ -71,7 +71,7 @@ public class SortingService {
                 }
             }
             boolean sort = Boolean.parseBoolean(ctx.queryParam("sort"));
-            String columnName = ctx.queryParam("columnName");
+
 
             if (!ignoreBoolean) {
                 PostCategoryComparator comparator = new PostCategoryComparator();

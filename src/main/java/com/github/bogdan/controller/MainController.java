@@ -23,8 +23,7 @@ import java.util.Set;
 
 import static com.github.bogdan.service.AuthService.checkAuthorization;
 import static com.github.bogdan.service.CtxService.*;
-import static com.github.bogdan.service.PaginationService.getPages;
-import static com.github.bogdan.service.PaginationService.getPagination;
+import static com.github.bogdan.service.PaginationService.*;
 import static com.github.bogdan.service.PostApplicationService.checkDoesSuchApplicationExist;
 import static com.github.bogdan.service.PostApplicationService.checkIsItUsersApplication;
 import static com.github.bogdan.service.PostService.getPostUser;
@@ -137,9 +136,13 @@ public class MainController {
         String serialized;
 
         LOGGER.info(String.valueOf(getPagination(getByQueryParams(userId, userDao, postDao, postApplicationDao, dao, clazz, params, ctx), page, size)));
-        serialized = objectMapper.writeValueAsString(getPagination(getByQueryParams(userId, userDao, postDao, postApplicationDao, dao, clazz, params, ctx), page, size));
-
-        ctx.header("total-pages", String.valueOf(getPages(dao, getByQueryParams(userId, userDao, postDao, postApplicationDao, dao, clazz, params, ctx), size)));
+        if(doesQueryParamsEmpty(ctx,params)){
+            serialized = objectMapper.writeValueAsString(getPagination(dao,page,size));
+            ctx.header("total-pages", String.valueOf(getDaoPages(dao, size)));
+        }else {
+            serialized = objectMapper.writeValueAsString(getPagination(getByQueryParams(userId, userDao, postDao, postApplicationDao, dao, clazz, params, ctx), page, size));
+            ctx.header("total-pages", String.valueOf(getPages(getByQueryParams(userId, userDao, postDao, postApplicationDao, dao, clazz, params, ctx), size)));
+        }
 
         ctx.result(serialized);
     }
@@ -328,7 +331,7 @@ public class MainController {
         String serialized;
         serialized = objectMapper.writeValueAsString(getPagination(postApplicationArrayList, page, size));
 
-        ctx.header("total-pages", String.valueOf(getPages(postApplicationDao, postApplicationArrayList, size)));
+        ctx.header("total-pages", String.valueOf(getPages(postApplicationArrayList, size)));
 
         ctx.result(serialized);
 
