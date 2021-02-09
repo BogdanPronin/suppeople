@@ -17,9 +17,13 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.github.bogdan.service.PostApplicationService.getPostApplications;
+import static com.github.bogdan.service.PostApplicationService.getPostApplications2;
+import static com.github.bogdan.service.PostService.*;
 import static com.github.bogdan.service.UserService.checkBooleanIsUserAdmin;
 import static com.github.bogdan.service.UserService.checkIsUserAdmin;
 
@@ -86,8 +90,15 @@ public class SortingService {
                 PostCategoryComparator comparator = new PostCategoryComparator();
                 ((List<Post>) objects).sort(comparator);
             } else return objects;
+            return objects;
         }
-        return objects;
+        else if(tClass == PostApplication.class){
+            objects.clear();
+            objects.addAll((Collection<? extends T>) getPostApplications2( getUsersPosts(userId,postDao),postApplicationDao));
+            return objects;
+        }
+        else return objects;
+
     }
 
 //    public static <T> List<T> sort(Dao<T, Integer> dao, Context ctx) throws SQLException {

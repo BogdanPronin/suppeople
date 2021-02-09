@@ -7,11 +7,15 @@ import com.github.bogdan.model.PostApplication;
 import com.github.bogdan.model.User;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class PostApplicationService {
 
+    static Logger LOGGER = LoggerFactory.getLogger(PostApplicationService.class);
 
     public static void checkDoesSuchApplicationExist(int userId,int postId,Dao<PostApplication,Integer> postApplicationDao) throws SQLException {
         for(PostApplication p:postApplicationDao.queryForAll()){
@@ -43,6 +47,13 @@ public class PostApplicationService {
             if(p.getPost().getId() == postId){
                 postApplications.add(p);
             }
+        }
+        return postApplications;
+    }
+    public static ArrayList<PostApplication> getPostApplications2(ArrayList<Post> posts,Dao<PostApplication,Integer> postApplicationDao) throws SQLException {
+        ArrayList<PostApplication> postApplications = new ArrayList<>();
+        for(Post p: posts){
+            postApplications.addAll(getPostApplications(p.getId(),postApplicationDao));
         }
         return postApplications;
     }

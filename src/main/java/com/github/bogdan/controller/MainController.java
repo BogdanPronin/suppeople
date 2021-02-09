@@ -10,8 +10,6 @@ import com.github.bogdan.serializer.*;
 import com.github.bogdan.service.CategoryService;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
 import io.javalin.http.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,6 +123,7 @@ public class MainController {
         }else if(clazz == PostApplication.class){
             PostApplication p = new PostApplication();
             params.addAll(p.getQueryParams());
+
             simpleModule.addSerializer(PostApplication.class, new PostApplicationSerializer());
         }else if(clazz == Favorites.class){
             checkDoesBasicAuthEmpty(ctx);
@@ -135,12 +134,10 @@ public class MainController {
         }
 
         String serialized;
-        if(doesQueryParamsEmpty(ctx,params)){
-            serialized = objectMapper.writeValueAsString(getPagination(dao,page,size));
-        }else{
+
             LOGGER.info(String.valueOf(getPagination(getByQueryParams(userId,userDao,postDao,postApplicationDao,dao,clazz,params,ctx),page,size)));
             serialized = objectMapper.writeValueAsString(getPagination(getByQueryParams(userId,userDao,postDao,postApplicationDao,dao,clazz,params,ctx),page,size));
-        }
+
         ctx.header("total-pages", String.valueOf(getPages(dao,getByQueryParams(userId,userDao,postDao,postApplicationDao,dao,clazz,params,ctx),size)));
 
         ctx.result(serialized);

@@ -1,13 +1,10 @@
 package com.github.bogdan.service;
 
-import com.github.bogdan.databaseConfiguration.DatabaseConfiguration;
 import com.github.bogdan.exception.WebException;
 import com.github.bogdan.model.Role;
 import com.github.bogdan.model.User;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import io.javalin.http.Context;
-
 import java.sql.SQLException;
 
 public class UserService {

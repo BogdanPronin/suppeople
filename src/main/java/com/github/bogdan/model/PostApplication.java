@@ -106,4 +106,12 @@ public class PostApplication implements Filtration{
         s.add("isWatched");
         return s;
     }
+
+    @Override
+    public String toString() {
+        return "PostApplication{" +
+                "id=" + id +
+                ", user=" + user +
+                ", post=" + post ;
+    }
 }
