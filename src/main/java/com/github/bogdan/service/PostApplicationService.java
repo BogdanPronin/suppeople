@@ -45,6 +45,7 @@ public class PostApplicationService {
         ArrayList<PostApplication> postApplications = new ArrayList<>();
         for(PostApplication p: postApplicationDao.queryForAll()){
             if(p.getPost().getId() == postId){
+                LOGGER.info("PostApplication:"+p);
                 postApplications.add(p);
             }
         }
@@ -55,6 +56,7 @@ public class PostApplicationService {
         for(Post p: posts){
             postApplications.addAll(getPostApplications(p.getId(),postApplicationDao));
         }
+        LOGGER.info("PostApplications:"+postApplications);
         return postApplications;
     }
 

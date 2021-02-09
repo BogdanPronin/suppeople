@@ -135,9 +135,9 @@ public class MainController {
 
         String serialized;
 
-        LOGGER.info(String.valueOf(getPagination(getByQueryParams(userId, userDao, postDao, postApplicationDao, dao, clazz, params, ctx), page, size)));
+
         if(doesQueryParamsEmpty(ctx,params)){
-            serialized = objectMapper.writeValueAsString(getPagination(dao,page,size));
+            serialized = objectMapper.writeValueAsString(getPagination(getByQueryParams(userId, userDao, postDao, postApplicationDao, dao, clazz, params, ctx),page,size));
             ctx.header("total-pages", String.valueOf(getDaoPages(dao, size)));
         }else {
             serialized = objectMapper.writeValueAsString(getPagination(getByQueryParams(userId, userDao, postDao, postApplicationDao, dao, clazz, params, ctx), page, size));

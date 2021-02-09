@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static com.github.bogdan.service.PostApplicationService.LOGGER;
 import static com.github.bogdan.service.PostApplicationService.getPostApplications;
 
 public class PostService {
@@ -30,6 +31,7 @@ public class PostService {
                     posts.add(p);
                 }
             }
+            LOGGER.info("User's posts"+String.valueOf(posts));
             return posts;
     }
     public static void checkDoesSuchPostExist(int id,Dao<Post,Integer> postDao) throws SQLException {
