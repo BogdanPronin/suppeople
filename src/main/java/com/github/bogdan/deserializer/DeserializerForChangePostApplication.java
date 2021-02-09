@@ -22,7 +22,7 @@ import static com.github.bogdan.service.PostService.*;
 import static com.github.bogdan.service.UserService.checkBooleanIsUserAdmin;
 
 public class DeserializerForChangePostApplication extends StdDeserializer<PostApplication> {
-    public DeserializerForChangePostApplication(int id, User user,Dao<PostApplication,Integer> postApplicationDao,Dao<User, Integer> userDao,Dao<Post, Integer> postDao) {
+    public DeserializerForChangePostApplication(int id, User user, Dao<PostApplication, Integer> postApplicationDao, Dao<User, Integer> userDao, Dao<Post, Integer> postDao) {
         super(PostApplication.class);
         this.id = id;
         this.user = user;
@@ -30,10 +30,11 @@ public class DeserializerForChangePostApplication extends StdDeserializer<PostAp
         this.userDao = userDao;
         this.postDao = postDao;
     }
+
     private User user;
     private int id;
     private Dao<User, Integer> userDao;
-    private Dao<PostApplication,Integer> postApplicationDao;
+    private Dao<PostApplication, Integer> postApplicationDao;
     private Dao<Post, Integer> postDao;
 
     public int getId() {
@@ -59,28 +60,25 @@ public class DeserializerForChangePostApplication extends StdDeserializer<PostAp
 
         try {
             PostApplication p = new PostApplication();
-            checkDoesSuchApplicationExist(id,postApplicationDao);
+            checkDoesSuchApplicationExist(id, postApplicationDao);
             PostApplication postApplicationBase = postApplicationDao.queryForId(id);
 
             p.setId(id);
             p.setMessage(postApplicationBase.getMessage());
-            p.setStatus(postApplicationBase.getStatus());
-            checkPostUser(postApplicationBase.getPost().getId(),getUser().getId(),postDao);
-            if(postApplicationBase.getStatus() == ApplicationStatus.ADDED){
-                String status = getOldStringFieldValue(node, "status","ADDED");
-                p.setStatus(ApplicationStatus.valueOf(status));
-            }
+            checkPostUser(postApplicationBase.getPost().getId(), getUser().getId(), postDao);
+            String status = getOldStringFieldValue(node, "status", "ADDED");
+            p.setStatus(ApplicationStatus.valueOf(status));
 
 
             int postId;
-            if(checkBooleanIsUserAdmin(postApplicationBase.getUser().getId(),userDao)){
-                postId = getOldIntFieldValue(node,"postId",postApplicationBase.getPost().getId());
-                checkDoesSuchPostExist(postId,postDao);
-                String message = getOldStringFieldValue(node,"message",postApplicationBase.getMessage());
+            if (checkBooleanIsUserAdmin(postApplicationBase.getUser().getId(), userDao)) {
+                postId = getOldIntFieldValue(node, "postId", postApplicationBase.getPost().getId());
+                checkDoesSuchPostExist(postId, postDao);
+                String message = getOldStringFieldValue(node, "message", postApplicationBase.getMessage());
                 p.setMessage(message);
-            }else postId = postApplicationBase.getPost().getId();
+            } else postId = postApplicationBase.getPost().getId();
 
-            p.setPost(getPost(postId,postDao));
+            p.setPost(getPost(postId, postDao));
 
             p.setUser(postApplicationBase.getUser());
 
