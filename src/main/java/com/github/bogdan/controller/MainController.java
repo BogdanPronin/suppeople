@@ -1,4 +1,5 @@
 package com.github.bogdan.controller;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -35,19 +36,19 @@ public class MainController {
     private static DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(DatabasePath.getPath());
 
     private static Dao<User, Integer> userDao;
-    private static Dao<Category,Integer> categoryDao;
-    private static Dao<Post,Integer> postDao ;
-    private static Dao<PostApplication,Integer> postApplicationDao;
+    private static Dao<Category, Integer> categoryDao;
+    private static Dao<Post, Integer> postDao;
+    private static Dao<PostApplication, Integer> postApplicationDao;
     private static Dao<Favorites, Integer> favoritesDao;
     private static Dao<Report, Integer> reportDao;
     private static Dao<Cities, Integer> citiesDao;
 
     static {
         try {
-            citiesDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(),Cities.class);
-            reportDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(),Report.class);
+            citiesDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(), Cities.class);
+            reportDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(), Report.class);
             favoritesDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(), Favorites.class);
-            postApplicationDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(),PostApplication.class);
+            postApplicationDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(), PostApplication.class);
             postDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(), Post.class);
             categoryDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(), Category.class);
             userDao = DaoManager.createDao(databaseConfiguration.getConnectionSource(), User.class);
@@ -57,29 +58,29 @@ public class MainController {
         }
     }
 
-    public static <T> void add(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
+    public static <T> void add(Context ctx, Dao<T, Integer> dao, Class<T> clazz) throws JsonProcessingException, SQLException {
         ctx.header("content-type:app/json");
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
 
         if (clazz == User.class) {
-            simpleModule.addDeserializer(User.class, new DeserializerForAddUser(userDao,citiesDao));
-        }else {
+            simpleModule.addDeserializer(User.class, new DeserializerForAddUser(userDao, citiesDao));
+        } else {
             checkDoesBasicAuthEmpty(ctx);
-            checkAuthorization(ctx,userDao);
+            checkAuthorization(ctx, userDao);
         }
 
-        if(clazz == Post.class){
-            simpleModule.addDeserializer(Post.class, new DeserializerForAddPost(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao),categoryDao,citiesDao));
-        }else if(clazz == Category.class){
-            checkIsUserAdmin(ctx,userDao);
-            simpleModule.addDeserializer(Category.class,new DeserializerForCategory(categoryDao));
-        }else if(clazz == PostApplication.class){
-            simpleModule.addDeserializer(PostApplication.class, new DeserializerForAddPostApplication(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId(),userDao,postDao,postApplicationDao));
-        }else if(clazz == Favorites.class){
-            simpleModule.addDeserializer(Favorites.class, new DeserializerForAddFavorites(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao),postDao,favoritesDao));
-        }else if(clazz == Report.class){
-            simpleModule.addDeserializer(Report.class, new DeserializerForAddReport(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao),userDao));
+        if (clazz == Post.class) {
+            simpleModule.addDeserializer(Post.class, new DeserializerForAddPost(getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao), categoryDao, citiesDao));
+        } else if (clazz == Category.class) {
+            checkIsUserAdmin(ctx, userDao);
+            simpleModule.addDeserializer(Category.class, new DeserializerForCategory(categoryDao));
+        } else if (clazz == PostApplication.class) {
+            simpleModule.addDeserializer(PostApplication.class, new DeserializerForAddPostApplication(getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getId(), userDao, postDao, postApplicationDao));
+        } else if (clazz == Favorites.class) {
+            simpleModule.addDeserializer(Favorites.class, new DeserializerForAddFavorites(getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao), postDao, favoritesDao));
+        } else if (clazz == Report.class) {
+            simpleModule.addDeserializer(Report.class, new DeserializerForAddReport(getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao), userDao));
         }
 
         checkBodyRequestIsEmpty(ctx);
@@ -87,21 +88,21 @@ public class MainController {
         objectMapper.registerModule(simpleModule);
         Object obj = objectMapper.readValue(body, clazz);
         dao.create((T) obj);
-        if(clazz != User.class) {
+        if (clazz != User.class) {
             created(ctx);
-        }else{
+        } else {
             simpleModule.addSerializer(User.class, new UserGetSerializer(((User) obj).getId()));
             ctx.result(objectMapper.writeValueAsString(obj));
         }
     }
 
-    public static <T> void get(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException, NoSuchFieldException, IllegalAccessException, UnsupportedEncodingException {
+    public static <T> void get(Context ctx, Dao<T, Integer> dao, Class<T> clazz) throws JsonProcessingException, SQLException, NoSuchFieldException, IllegalAccessException, UnsupportedEncodingException {
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
         int userId = 0;
-        if(ctx.basicAuthCredentialsExist()){
-            if(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao)!=null) {
-                userId = getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId();
+        if (ctx.basicAuthCredentialsExist()) {
+            if (getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao) != null) {
+                userId = getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getId();
             }
         }
         simpleModule.addSerializer(User.class, new UserGetSerializer(userId));
@@ -113,21 +114,21 @@ public class MainController {
         int size = getPagesSize(ctx);
 
         ArrayList<String> params = new ArrayList<>();
-        if(clazz == User.class){
+        if (clazz == User.class) {
             User u = new User();
             params.addAll(u.getQueryParams());
-        }else if(clazz == Post.class){
+        } else if (clazz == Post.class) {
             Post p = new Post();
             params.addAll(p.getQueryParams());
             simpleModule.addSerializer(PostApplication.class, new PostApplicationGetSerializer());
-        }else if(clazz == PostApplication.class){
+        } else if (clazz == PostApplication.class) {
             PostApplication p = new PostApplication();
             params.addAll(p.getQueryParams());
 
             simpleModule.addSerializer(PostApplication.class, new PostApplicationSerializer());
-        }else if(clazz == Favorites.class){
+        } else if (clazz == Favorites.class) {
             checkDoesBasicAuthEmpty(ctx);
-            checkAuthorization(ctx,userDao);
+            checkAuthorization(ctx, userDao);
             Favorites f = new Favorites();
             params.addAll(f.getQueryParams());
             simpleModule.addSerializer(PostApplication.class, new PostApplicationGetSerializer());
@@ -135,21 +136,21 @@ public class MainController {
 
         String serialized;
 
-            LOGGER.info(String.valueOf(getPagination(getByQueryParams(userId,userDao,postDao,postApplicationDao,dao,clazz,params,ctx),page,size)));
-            serialized = objectMapper.writeValueAsString(getPagination(getByQueryParams(userId,userDao,postDao,postApplicationDao,dao,clazz,params,ctx),page,size));
+        LOGGER.info(String.valueOf(getPagination(getByQueryParams(userId, userDao, postDao, postApplicationDao, dao, clazz, params, ctx), page, size)));
+        serialized = objectMapper.writeValueAsString(getPagination(getByQueryParams(userId, userDao, postDao, postApplicationDao, dao, clazz, params, ctx), page, size));
 
-        ctx.header("total-pages", String.valueOf(getPages(dao,getByQueryParams(userId,userDao,postDao,postApplicationDao,dao,clazz,params,ctx),size)));
+        ctx.header("total-pages", String.valueOf(getPages(dao, getByQueryParams(userId, userDao, postDao, postApplicationDao, dao, clazz, params, ctx), size)));
 
         ctx.result(serialized);
     }
 
-    public static <T> void getById(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws SQLException, JsonProcessingException {
+    public static <T> void getById(Context ctx, Dao<T, Integer> dao, Class<T> clazz) throws SQLException, JsonProcessingException {
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
         int userId = 0;
-        if(ctx.basicAuthCredentialsExist()){
-            if(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao)!=null) {
-                userId = getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId();
+        if (ctx.basicAuthCredentialsExist()) {
+            if (getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao) != null) {
+                userId = getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getId();
             }
         }
         simpleModule.addSerializer(User.class, new UserGetSerializer(userId));
@@ -158,42 +159,44 @@ public class MainController {
 
         objectMapper.registerModule(simpleModule);
         int id = Integer.parseInt(ctx.pathParam("id"));
-        if(dao.queryForId(id) == null){
-            throw new WebException("Такого не существует",404);
+        if (dao.queryForId(id) == null) {
+            throw new WebException("Такого не существует", 404);
         }
         String serialized = objectMapper.writeValueAsString(dao.queryForId(id));
 
         ctx.result(serialized);
 
     }
-    public static <T> void change(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
+
+    public static <T> void change(Context ctx, Dao<T, Integer> dao, Class<T> clazz) throws JsonProcessingException, SQLException {
         checkDoesBasicAuthEmpty(ctx);
 
-        ctx.header("content-type","app/json");
+        ctx.header("content-type", "app/json");
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
         int id = Integer.parseInt(ctx.pathParam("id"));
         checkBodyRequestIsEmpty(ctx);
         String body = ctx.body();
 
-        checkAuthorization(ctx,userDao);
+        checkAuthorization(ctx, userDao);
         if (clazz == User.class) {
-            if(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getRole()!= Role.ADMIN){
-                if(id != getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId()){
+            if (getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getRole() != Role.ADMIN) {
+                if (id != getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getId()) {
                     youAreNotAdmin(ctx);
                 }
             }
-            checkDoesSuchUserExist(id,userDao);
-            simpleModule.addDeserializer(User.class, new DeserializerForChangeUser(id,userDao,citiesDao));
-        }else if(clazz == Category.class){
+            checkDoesSuchUserExist(id, userDao);
+            simpleModule.addDeserializer(User.class, new DeserializerForChangeUser(id, userDao, citiesDao));
+        } else if (clazz == Category.class) {
             simpleModule.addDeserializer(Category.class, new DeserializerForCategory(id));
-            CategoryService.checkDoesSuchCategoryExist(id,categoryDao);
-        } if(clazz == Post.class){
-            simpleModule.addDeserializer(Post.class,new DeserializerForChangePost(id, getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId(),postDao,userDao,postApplicationDao));
-        }else if(clazz == PostApplication.class){
-            simpleModule.addDeserializer(PostApplication.class,new DeserializerForChangePostApplication(id,getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao),postApplicationDao,userDao,postDao));
-            if(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getRole()!= Role.ADMIN){
-                checkIsItUsersApplication(id, getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId(),postApplicationDao);
+            CategoryService.checkDoesSuchCategoryExist(id, categoryDao);
+        }
+        if (clazz == Post.class) {
+            simpleModule.addDeserializer(Post.class, new DeserializerForChangePost(id, getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getId(), postDao, userDao, postApplicationDao));
+        } else if (clazz == PostApplication.class) {
+            simpleModule.addDeserializer(PostApplication.class, new DeserializerForChangePostApplication(id, getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao), postApplicationDao, userDao, postDao));
+            if (getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getRole() != Role.ADMIN) {
+                checkIsItUsersApplication(id, getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getId(), postApplicationDao);
             }
         }
 
@@ -204,34 +207,34 @@ public class MainController {
         updated(ctx);
     }
 
-    public static <T> void delete(Context ctx, Dao<T,Integer> dao,Class<T> clazz) throws JsonProcessingException, SQLException {
+    public static <T> void delete(Context ctx, Dao<T, Integer> dao, Class<T> clazz) throws JsonProcessingException, SQLException {
         checkDoesBasicAuthEmpty(ctx);
         ctx.header("content-type:app/json");
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
         int id = Integer.parseInt(ctx.pathParam("id"));
-        checkAuthorization(ctx,userDao);
+        checkAuthorization(ctx, userDao);
         if (clazz == User.class) {
-            if(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getRole()!= Role.ADMIN){
-                if(id != getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId()){
+            if (getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getRole() != Role.ADMIN) {
+                if (id != getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getId()) {
                     youAreNotAdmin(ctx);
                 }
             }
-            checkDoesSuchUserExist(id,userDao);
-        }else if(clazz == Post.class){
-            if(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getRole()!= Role.ADMIN){
-                if(id != getPostUser(id,postDao).getId()){
+            checkDoesSuchUserExist(id, userDao);
+        } else if (clazz == Post.class) {
+            if (getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getRole() != Role.ADMIN) {
+                if (id != getPostUser(id, postDao).getId()) {
                     youAreNotAdmin(ctx);
                 }
             }
-        }else if(clazz == Category.class){
-            checkIsUserAdmin(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao));
-            CategoryService.checkDoesSuchCategoryExist(id,categoryDao);
-        }else if(clazz == PostApplication.class){
-            if(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getRole()!= Role.ADMIN){
-                checkIsItUsersApplication(id, getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId(),postApplicationDao);
+        } else if (clazz == Category.class) {
+            checkIsUserAdmin(getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao));
+            CategoryService.checkDoesSuchCategoryExist(id, categoryDao);
+        } else if (clazz == PostApplication.class) {
+            if (getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getRole() != Role.ADMIN) {
+                checkIsItUsersApplication(id, getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getId(), postApplicationDao);
             }
-            checkDoesSuchApplicationExist(id,postApplicationDao);
+            checkDoesSuchApplicationExist(id, postApplicationDao);
         }
 
         objectMapper.registerModule(simpleModule);
@@ -240,22 +243,22 @@ public class MainController {
         deleted(ctx);
     }
 
-    public static void search(Context ctx, Dao<User,Integer> userDao) throws SQLException, JsonProcessingException {
+    public static void search(Context ctx, Dao<User, Integer> userDao) throws SQLException, JsonProcessingException {
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
         String searchString = ctx.queryParam("searchString");
-        Set<User> users =new HashSet<>();
+        Set<User> users = new HashSet<>();
 
         String[] search = searchString.toLowerCase().split(" ");
-        if(search.length != 0){
-            for(User u:userDao.queryForAll()){
-                if(search.length == 1) {
+        if (search.length != 0) {
+            for (User u : userDao.queryForAll()) {
+                if (search.length == 1) {
                     if (u.getLname().toLowerCase().contains(search[0])
                             || u.getFname().toLowerCase().contains(search[0])
                     ) {
                         users.add(u);
                     }
-                }else {
+                } else {
                     if (u.getFname().toLowerCase().contains(search[0])
                             && u.getLname().toLowerCase().contains(search[1])
                             || u.getFname().toLowerCase().contains(search[1])
@@ -272,18 +275,20 @@ public class MainController {
         objectMapper.registerModule(simpleModule);
         ctx.result(objectMapper.writeValueAsString(users));
     }
+
     public static void getAuthorized(Context ctx) throws JsonProcessingException, SQLException {
         ObjectMapper objectMapper = new ObjectMapper();
 
         checkDoesBasicAuthEmpty(ctx);
-        checkAuthorization(ctx,userDao);
+        checkAuthorization(ctx, userDao);
         SimpleModule simpleModule = new SimpleModule();
 
-        simpleModule.addSerializer(User.class, new UserGetSerializer(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId()));
+        simpleModule.addSerializer(User.class, new UserGetSerializer(getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getId()));
         objectMapper.registerModule(simpleModule);
 
-        ctx.result(objectMapper.writeValueAsString(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao)));
+        ctx.result(objectMapper.writeValueAsString(getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao)));
     }
+
     public static void getUserApplications(Context ctx) throws SQLException, JsonProcessingException {
         SimpleModule simpleModule = new SimpleModule();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -295,35 +300,35 @@ public class MainController {
         int size = getPagesSize(ctx);
         ArrayList<PostApplication> postApplicationArrayList = new ArrayList<>();
         int userId = 0;
-        if(ctx.basicAuthCredentialsExist()){
-            if(getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao)!=null) {
-                userId = getUserByLogin(ctx.basicAuthCredentials().getUsername(),userDao).getId();
+        if (ctx.basicAuthCredentialsExist()) {
+            if (getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao) != null) {
+                userId = getUserByLogin(ctx.basicAuthCredentials().getUsername(), userDao).getId();
             }
         }
         simpleModule.addSerializer(User.class, new UserGetSerializer(userId));
         objectMapper.registerModule(simpleModule);
 
-        if(ctx.queryParam("user")!= null){
-            checkIsUserAdmin(ctx,userDao);
-            if(userDao.queryForId(Integer.parseInt(ctx.queryParam("user")))!=null){
+        if (ctx.queryParam("user") != null) {
+            checkIsUserAdmin(ctx, userDao);
+            if (userDao.queryForId(Integer.parseInt(ctx.queryParam("user"))) != null) {
                 userId = Integer.parseInt(ctx.queryParam("user"));
-                for(PostApplication postApplication:postApplicationDao.queryForAll()){
-                    if(postApplication.getUser().getId()==userId){
+                for (PostApplication postApplication : postApplicationDao.queryForAll()) {
+                    if (postApplication.getUser().getId() == userId) {
                         postApplicationArrayList.add(postApplication);
                     }
                 }
             }
-        }else {
-            for(PostApplication postApplication:postApplicationDao.queryForAll()){
-                if(postApplication.getUser().getId()==userId){
+        } else {
+            for (PostApplication postApplication : postApplicationDao.queryForAll()) {
+                if (postApplication.getUser().getId() == userId) {
                     postApplicationArrayList.add(postApplication);
                 }
             }
         }
         String serialized;
-        serialized = objectMapper.writeValueAsString(getPagination(postApplicationArrayList,page,size));
+        serialized = objectMapper.writeValueAsString(getPagination(postApplicationArrayList, page, size));
 
-        ctx.header("total-pages", String.valueOf(getPages(postApplicationDao,postApplicationArrayList,size)));
+        ctx.header("total-pages", String.valueOf(getPages(postApplicationDao, postApplicationArrayList, size)));
 
         ctx.result(serialized);
 

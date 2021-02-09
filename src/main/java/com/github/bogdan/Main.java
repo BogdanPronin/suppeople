@@ -69,7 +69,6 @@ public class Main {
         app.delete("/postApplication", ctx -> MainController.get(ctx,postApplicationDao,PostApplication.class));
         app.get("/userApplication",ctx -> MainController.getUserApplications(ctx));
         app.post("/favorites", ctx -> MainController.add(ctx,favoritesDao,Favorites.class));
-        //app.patch("/postApplication/:id", ctx -> MainController.change(ctx,postApplicationDao,PostApplication.class));
         app.get("/favorites", ctx -> MainController.get(ctx,favoritesDao,Favorites.class));
 //        app.delete("/postApplication", ctx -> MainController.get(ctx,postApplicationDao,PostApplication.class));
 

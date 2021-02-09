@@ -15,6 +15,7 @@ public class PostApplicationGetSerializer extends StdSerializer<PostApplication>
     @Override
     public void serialize(PostApplication postApplication, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartObject();
+        jsonGenerator.writeNumberField("id",postApplication.getId());
         jsonGenerator.writeObjectField("applicationUser",postApplication.getUser());
         jsonGenerator.writeStringField("message",postApplication.getMessage());
         jsonGenerator.writeEndObject();
